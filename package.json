@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky",
+    "dev": "pnpm nx run-many -t serve -p web,api --parallel=2",
     "build": "pnpm nx run-many -t build",
     "typecheck": "pnpm nx run-many -t typecheck",
     "test": "pnpm nx run-many -t test",
