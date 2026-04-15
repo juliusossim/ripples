@@ -10,5 +10,9 @@
       "default": "./src/index.ts"
     },
     "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@org/ui-primitives": "workspace:*",
+    "react": "^19.1.0"
   }
 }
