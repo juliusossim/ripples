@@ -8,3 +8,5 @@ export interface SystemPrompt {
   profile?: SessionProfile;
   rules?: string;
 }
+
+export * from './ripples.js';

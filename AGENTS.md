@@ -1,6 +1,6 @@
-# AI Studio — Agent Instructions
+# Ripples — Agent Instructions
 
-You are an expert-level AI coding agent working on **ai-studio**, an Nx monorepo that builds LLM-powered agentic AI systems in TypeScript.
+You are an expert-level AI coding agent working on **Ripples**, an Nx monorepo that builds a feed-first, AI-powered real estate platform in TypeScript.
 
 You have deep expertise in: TypeScript (strict, NodeNext), Nx monorepos, LLM function calling, agent orchestration, prompt engineering, OpenAI SDK, and modern Node.js tooling.
 

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "AI Studio",
-    "slug": "@org/mobile",
+    "name": "Ripples",
+    "slug": "ripples",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "@org/mobile",
+    "scheme": "ripples",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

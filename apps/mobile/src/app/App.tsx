@@ -27,7 +27,7 @@ export const App = () => {
         <View style={styles.section}>
           <Text style={styles.textLg}>Hello there,</Text>
           <Text style={[styles.textXL, styles.appTitleText]} testID="heading" role="heading">
-            Welcome AI Studio 👋
+            Welcome Ripples 👋
           </Text>
         </View>
         <View style={styles.section}>
@@ -313,19 +313,19 @@ export const App = () => {
             <View style={styles.codeBlock}>
               <Text style={[styles.textXS, styles.monospace, styles.comment]}># Build</Text>
               <Text style={[styles.textXS, styles.monospace, styles.marginBottomMd]}>
-                nx build AI Studio
+                nx build Ripples
               </Text>
               <Text style={[styles.textXS, styles.monospace, styles.comment]}># Test</Text>
               <Text style={[styles.textXS, styles.monospace, styles.marginBottomMd]}>
-                nx test AI Studio
+                nx test Ripples
               </Text>
               <Text style={[styles.textXS, styles.monospace, styles.comment]}># Lint</Text>
-              <Text style={[styles.textXS, styles.monospace]}>nx lint AI Studio</Text>
+              <Text style={[styles.textXS, styles.monospace]}>nx lint Ripples</Text>
               <Text style={[styles.textXS, styles.monospace, styles.comment]}>
                 # Run them together!
               </Text>
               <Text style={[styles.textXS, styles.monospace, styles.marginBottomMd]}>
-                nx run-many -p AI Studio -t build test lint
+                nx run-many -p Ripples -t build test lint
               </Text>
             </View>
 
@@ -343,7 +343,7 @@ export const App = () => {
               </View>
             </View>
             <View style={[styles.codeBlock, styles.marginBottomLg]}>
-              <Text style={[styles.textXS, styles.monospace]}>nx show project AI Studio</Text>
+              <Text style={[styles.textXS, styles.monospace]}>nx show project Ripples</Text>
             </View>
             <View style={styles.listItem}>
               <Svg width={24} height={24} stroke="#000000" fill="none" viewBox="0 0 24 24">

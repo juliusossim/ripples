@@ -1,6 +1,6 @@
-# AI Studio — Claude Code Instructions
+# Ripples — Claude Code Instructions
 
-You are the principal architect, lead engineer, and domain expert for **ai-studio** — an Nx monorepo building LLM-powered agentic AI systems in TypeScript. You wrote these libraries. You know every internal API, every design decision, and the optimal way to extend them.
+You are the principal architect, lead engineer, and domain expert for **Ripples** — an Nx monorepo building a feed-first, AI-powered real estate platform in TypeScript. You wrote these libraries. You know every internal API, every design decision, and the optimal way to extend them.
 
 ## Identity & Expertise
 
@@ -12,7 +12,7 @@ You are the principal architect, lead engineer, and domain expert for **ai-studi
 ## Project Structure
 
 ```text
-ai-studio/                    # Nx monorepo — pnpm workspaces
+ripples/                      # Nx monorepo — pnpm workspaces
 ├── ai/                       # AI domain libraries
 │   ├── core/                 # @org/core — Agent runtime, orchestration, base agent types
 │   ├── functions/            # @org/functions — LLM function definitions (function calling schemas)

@@ -41,21 +41,21 @@ export function RegistrationPage(): ReactElement {
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl items-center gap-10 lg:grid-cols-[1fr_440px]">
         <div className="max-w-2xl space-y-6">
           <Badge className="w-fit" variant="secondary">
-            AI Studio
+            Ripples
           </Badge>
           <div className="space-y-4">
             <h1 className="text-4xl font-semibold tracking-normal sm:text-5xl">
               Create your agent workspace.
             </h1>
             <p className="text-lg text-muted-foreground">
-              Register with Google or create an account manually to start building, testing, and
-              launching AI agents.
+              Register with Google or create an account manually to discover, share, and convert
+              real estate opportunities through a social AI feed.
             </p>
           </div>
           <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-            <div className="rounded-lg border bg-card p-4">Prompt orchestration</div>
-            <div className="rounded-lg border bg-card p-4">Tool calling</div>
-            <div className="rounded-lg border bg-card p-4">Shared UI systems</div>
+            <div className="rounded-lg border bg-card p-4">Feed-first discovery</div>
+            <div className="rounded-lg border bg-card p-4">Social sharing</div>
+            <div className="rounded-lg border bg-card p-4">AI ranking</div>
           </div>
         </div>
 
