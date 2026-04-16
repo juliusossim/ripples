@@ -102,11 +102,27 @@ Data:
 
 ### Phase 1: Core Foundation
 
-- Listing creation
-- Property cards
-- Feed integration
-- Interaction tracking
-- Basic ranking
+- [x] Listing creation
+- [x] Property cards
+- [x] Feed integration
+- [x] Interaction tracking
+- [x] Basic ranking
+
+Phase 1 implementation baseline:
+
+- Property listings, media, and platform events are durable PostgreSQL records owned by the API.
+- Feed ranking is deterministic and isolated in a ranking service so heuristic policy can evolve
+  without changing feed orchestration.
+- Web feed UI composes shared primitives, shared data hooks, and feature-specific components.
+- Access tokens remain in memory; refresh sessions stay in HttpOnly cookies.
+- Interaction events use stable client session IDs and authenticated user IDs when available.
+
+Phase 1 operating notes:
+
+- Local development with `prisma migrate dev` requires the local `ripples` database role to have
+  `CREATEDB` because Prisma creates a shadow database.
+- Production migration should use `prisma migrate deploy` with a migration-capable database role;
+  runtime application roles should remain least-privilege.
 
 ### Phase 1.5: Feed System
 

@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
-import { ChatModel } from 'openai/resources';
+import type OpenAI from 'openai';
+import type { ChatModel } from 'openai/resources';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 export interface BaseAgent {

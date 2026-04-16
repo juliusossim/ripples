@@ -91,7 +91,7 @@
       }
     }
   ],
-  "nxCloudId": "69ce6a9f1fb9b623dc8f5b2e",
+  "neverConnectToCloud": true,
   "analytics": true,
   "targetDefaults": {
     "build": {

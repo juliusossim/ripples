@@ -1,6 +1,7 @@
 import './dashboard.css';
+import type { ReactElement } from 'react';
 
-export function OrgFeatureDashboard() {
+export function OrgFeatureDashboard(): ReactElement {
   return (
     <div>
       <h1>Welcome to OrgFeatureDashboard!</h1>

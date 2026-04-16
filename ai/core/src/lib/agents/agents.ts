@@ -1,7 +1,7 @@
 import { OpenAI } from 'openai';
 import type { BaseAgent } from './types.js';
 import { requireEnv } from '@org/config';
-import { ChatCompletion } from 'openai/resources';
+import type { ChatCompletion } from 'openai/resources';
 
 const openai = new OpenAI({
   apiKey: requireEnv('OPENAI_API_KEY'),

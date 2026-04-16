@@ -47,13 +47,7 @@ export function requireEnv(key: string): string {
  */
 export function getEnvs<K extends string>(...keys: K[]): Record<K, string | undefined> {
   const env = getRuntimeEnv();
-  return keys.reduce(
-    (acc, key) => {
-      acc[key] = env[key];
-      return acc;
-    },
-    {} as Record<K, string | undefined>,
-  );
+  return Object.fromEntries(keys.map((key) => [key, env[key]])) as Record<K, string | undefined>;
 }
 
 /**

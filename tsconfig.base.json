@@ -18,21 +18,22 @@
     "target": "es2022",
     "customConditions": ["@org/source"],
     "paths": {
-      "@org/config": ["shared/config/src/index.ts"],
-      "@org/core": ["ai/core/src/index.ts"],
-      "@org/functions": ["ai/functions/src/index.ts"],
-      "@org/prompts": ["ai/prompts/src/index.ts"],
-      "@org/tools": ["ai/tools/src/index.ts"],
-      "@org/types": ["shared/types/src/index.ts"],
-      "@org/utils": ["shared/utils/src/index.ts"],
-      "@org/api-client": ["shared/api-client/src/index.ts"],
-      "@org/ui-primitives": ["ui/primitives/src/index.ts"],
-      "@org/ui-web": ["ui/web/src/index.ts"],
-      "@org/ui-native": ["ui/native/src/index.ts"],
-      "@org/ui-hooks": ["ui/hooks/src/index.ts"],
-      "@org/feature-chat": ["features/chat/src/index.ts"],
-      "@org/feature-agents": ["features/agents/src/index.ts"],
-      "@org/feature-dashboard": ["features/dashboard/src/index.ts"]
+      "@org/config": ["./shared/config/src/index.ts"],
+      "@org/core": ["./ai/core/src/index.ts"],
+      "@org/data": ["./shared/data/src/index.ts"],
+      "@org/functions": ["./ai/functions/src/index.ts"],
+      "@org/prompts": ["./ai/prompts/src/index.ts"],
+      "@org/tools": ["./ai/tools/src/index.ts"],
+      "@org/types": ["./shared/types/src/index.ts"],
+      "@org/utils": ["./shared/utils/src/index.ts"],
+      "@org/api-client": ["./shared/api-client/src/index.ts"],
+      "@org/ui-primitives": ["./ui/primitives/src/index.ts"],
+      "@org/ui-web": ["./ui/web/src/index.ts"],
+      "@org/ui-native": ["./ui/native/src/index.ts"],
+      "@org/ui-hooks": ["./ui/hooks/src/index.ts"],
+      "@org/feature-chat": ["./features/chat/src/index.ts"],
+      "@org/feature-agents": ["./features/agents/src/index.ts"],
+      "@org/feature-dashboard": ["./features/dashboard/src/index.ts"]
     }
   }
 }

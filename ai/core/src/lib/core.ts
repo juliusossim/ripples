@@ -1,7 +1,7 @@
 import { buildSystemPrompt } from '@org/prompts';
-import { ChatCompletion } from 'openai/resources';
+import type { ChatCompletion } from 'openai/resources';
 import { baseAgent } from './agents/agents.js';
-import { MemoryStore } from './data/service.js';
+import type { MemoryStore } from './data/service.js';
 import type { SendMessageInputs, ToolCallHandlerInputs, ToolHandler } from './types.js';
 import functionTools from './operations/functionTools.js';
 
@@ -14,13 +14,13 @@ export class ChatEngine {
     this.toolHandlers.set(name, handler);
   }
 
- async sendMessage(sendMessageInputs: SendMessageInputs): Promise<ChatCompletion> {
+  async sendMessage(sendMessageInputs: SendMessageInputs): Promise<ChatCompletion> {
     const { conversationId, profile, input, rules, ...baseAgentInputs } = sendMessageInputs;
     const storedProfile = this.memoryStore.getProfile(sendMessageInputs.conversationId);
     const systemPrompt = buildSystemPrompt({
       input,
       rules,
-      profile: profile || storedProfile,
+      profile: profile ?? storedProfile,
     });
     this.memoryStore.getOrCreateConversation(conversationId, systemPrompt);
 
@@ -46,15 +46,24 @@ export class ChatEngine {
       throw new Error('No response from agent');
     }
 
-    // Handle tool calls if the model requested them
-    const currentResponse = await this.handleToolCalls({ conversationId, response, baseAgentInputs });
+    const currentResponse = await this.handleToolCalls({
+      conversationId,
+      response,
+      baseAgentInputs,
+    });
 
-    this.memoryStore.addMessage(conversationId, { role: 'assistant', content: currentResponse.choices[0].message.content ?? '' });
+    this.memoryStore.addMessage(conversationId, {
+      role: 'assistant',
+      content: currentResponse.choices[0].message.content ?? '',
+    });
     return currentResponse;
   }
 
-  private async handleToolCalls({conversationId, response, baseAgentInputs}: ToolCallHandlerInputs
-  ): Promise<ChatCompletion> {
+  private async handleToolCalls({
+    conversationId,
+    response,
+    baseAgentInputs,
+  }: ToolCallHandlerInputs): Promise<ChatCompletion> {
     let currentResponse = response;
 
     while (currentResponse.choices[0].message.tool_calls?.length) {
@@ -83,7 +92,7 @@ export class ChatEngine {
     return currentResponse;
   }
 
-   chat(inputs: ChatCompletion, choice = 0): string {
+  chat(inputs: ChatCompletion, choice = 0): string {
     return inputs.choices[choice]?.message.content ?? '';
   }
 
@@ -93,8 +102,4 @@ export class ChatEngine {
     }
     return input.choices;
   }
-
-
-
-
 }

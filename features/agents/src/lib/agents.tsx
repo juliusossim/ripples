@@ -1,6 +1,7 @@
 import './agents.css';
+import type { ReactElement } from 'react';
 
-export function OrgFeatureAgents() {
+export function OrgFeatureAgents(): ReactElement {
   return (
     <div>
       <h1>Welcome to OrgFeatureAgents!</h1>

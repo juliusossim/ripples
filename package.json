@@ -8,6 +8,7 @@
     "build": "pnpm nx run-many -t build",
     "typecheck": "pnpm nx run-many -t typecheck",
     "test": "pnpm nx run-many -t test",
+    "test:coverage": "pnpm nx run-many -t test -p api,types,api-client,@org/data,ui-web,web -- --coverage",
     "lint": "pnpm nx run-many -t lint",
     "lint:fix": "pnpm nx run-many -t lint -- --fix",
     "format": "prettier --write .",
@@ -18,7 +19,13 @@
     "sync": "pnpm nx sync",
     "graph": "pnpm nx graph",
     "reset": "pnpm nx reset",
-    "clean": "pnpm nx reset && rm -rf dist"
+    "clean": "pnpm nx reset && rm -rf dist",
+    "prisma:generate": "pnpm nx run api:prisma-generate",
+    "prisma:migrate": "pnpm prisma:migrate:dev",
+    "prisma:migrate:dev": "pnpm nx run api:migrate-dev",
+    "prisma:migrate:deploy": "pnpm nx run api:migrate-deploy",
+    "prisma:studio": "pnpm nx run api:prisma-studio",
+    "sonar": "sonar-scanner"
   },
   "private": true,
   "devDependencies": {
@@ -102,8 +109,8 @@
     "expo-splash-screen": "~31.0.11",
     "expo-status-bar": "~3.0.8",
     "expo-system-ui": "~6.0.8",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "react-native": "0.81.5",
     "react-native-svg": "15.12.1",
     "react-native-svg-transformer": "~1.5.1",

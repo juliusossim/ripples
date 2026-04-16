@@ -1,9 +1,7 @@
-import { View, Text } from 'react-native';
+import type { ReactElement } from 'react';
+import { Text, View } from 'react-native';
 
-/* eslint-disable-next-line */
-export interface NativeProps {}
-
-export function Native(props: NativeProps) {
+export function Native(): ReactElement {
   return (
     <View>
       <Text>Welcome to native!</Text>

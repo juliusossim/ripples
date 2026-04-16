@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { type ReactElement, useRef, useState } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -9,8 +9,17 @@ import {
   Linking,
 } from 'react-native';
 import Svg, { G, Path } from 'react-native-svg';
+import { MobileErrorBoundary } from './error-boundary';
 
-export const App = () => {
+export function App(): ReactElement {
+  return (
+    <MobileErrorBoundary>
+      <AppContent />
+    </MobileErrorBoundary>
+  );
+}
+
+function AppContent(): ReactElement {
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);
 
@@ -163,7 +172,7 @@ export const App = () => {
                   strokeLinejoin="round"
                   strokeWidth="2"
                   d="M9 5l7 7-7 7"
-                ></Path>
+                />
               </Svg>
             </TouchableOpacity>
           </View>
@@ -410,7 +419,7 @@ export const App = () => {
       </ScrollView>
     </View>
   );
-};
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

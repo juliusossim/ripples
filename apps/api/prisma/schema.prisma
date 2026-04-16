@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthProvider {
+  manual
+  google
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum EventType {
+  view_property
+  like_property
+  save_property
+  share_property
+  click_ripple
+  contact_seller
+  start_transaction
+  complete_transaction
+}
+
+enum MediaType {
+  image
+  video
+}
+
+enum PropertyListingStatus {
+  draft
+  active
+  under_offer @map("under-offer")
+  sold
+  archived
+}
+
+model AuthUser {
+  id            String        @id @default(uuid()) @db.Uuid
+  email         String        @unique @db.VarChar(254)
+  fullName      String        @db.VarChar(120)
+  avatarUrl     String?       @db.VarChar(2048)
+  roles         UserRole[]    @default([user])
+  emailVerified Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  accounts      AuthAccount[]
+  sessions      AuthSession[]
+
+  @@index([createdAt])
+}
+
+model AuthAccount {
+  id             String       @id @default(uuid()) @db.Uuid
+  userId         String       @db.Uuid
+  provider       AuthProvider
+  providerUserId String       @db.VarChar(255)
+  passwordHash   String?
+  passwordSalt   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           AuthUser     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+}
+
+model AuthSession {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  refreshTokenHash String    @unique
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  user             AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
+model OAuthState {
+  state        String       @id
+  codeVerifier String
+  redirectUri  String       @db.VarChar(2048)
+  provider     AuthProvider
+  expiresAt    DateTime
+  createdAt    DateTime     @default(now())
+
+  @@index([expiresAt])
+}
+
+model PropertyListing {
+  id            String                @id @default(uuid()) @db.Uuid
+  title         String                @db.VarChar(160)
+  description   String                @db.VarChar(5000)
+  city          String                @db.VarChar(120)
+  country       String                @db.VarChar(120)
+  latitude      Float?
+  longitude     Float?
+  priceAmount   Float
+  priceCurrency String                @db.VarChar(3)
+  status        PropertyListingStatus @default(active)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  media         PropertyMedia[]
+
+  @@index([status, createdAt])
+  @@index([city, country])
+}
+
+model PropertyMedia {
+  id         String          @id @default(uuid()) @db.Uuid
+  propertyId String          @db.Uuid
+  url        String          @db.VarChar(2048)
+  type       MediaType
+  alt        String          @db.VarChar(240)
+  sortOrder  Int
+  property   PropertyListing @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId, sortOrder])
+}
+
+model PlatformEvent {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String?   @db.VarChar(160)
+  sessionId  String    @db.VarChar(160)
+  type       EventType
+  entityId   String    @db.VarChar(160)
+  entityType String    @db.VarChar(80)
+  metadata   Json
+  createdAt  DateTime  @default(now())
+
+  @@index([entityId, type])
+  @@index([sessionId, createdAt])
+  @@index([createdAt])
+}

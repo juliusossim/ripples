@@ -4,8 +4,22 @@
   "private": true,
   "nx": {
     "targets": {
+      "typecheck": {
+        "executor": "nx:run-commands",
+        "dependsOn": [
+          "prisma-generate",
+          "^typecheck"
+        ],
+        "options": {
+          "command": "tsc --build tsconfig.json --emitDeclarationOnly",
+          "cwd": "apps/api"
+        }
+      },
       "build": {
         "executor": "nx:run-commands",
+        "dependsOn": [
+          "prisma-generate"
+        ],
         "options": {
           "command": "webpack-cli build",
           "args": [
@@ -19,6 +33,42 @@
               "--node-env=development"
             ]
           }
+        }
+      },
+      "test": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "jest",
+          "cwd": "apps/api"
+        }
+      },
+      "prisma-generate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma generate",
+          "cwd": "apps/api"
+        }
+      },
+      "migrate-deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate deploy",
+          "cwd": "apps/api"
+        }
+      },
+      "migrate-dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma migrate dev",
+          "cwd": "apps/api"
+        }
+      },
+      "prisma-studio": {
+        "continuous": true,
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "prisma studio",
+          "cwd": "apps/api"
         }
       },
       "prune-lockfile": {
@@ -63,15 +113,15 @@
           "build"
         ],
         "options": {
-          "buildTarget": "@org/api:build",
+          "buildTarget": "api:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@org/api:build:development"
+            "buildTarget": "api:build:development"
           },
           "production": {
-            "buildTarget": "@org/api:build:production"
+            "buildTarget": "api:build:production"
           }
         }
       }
@@ -81,11 +131,19 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@org/types": "workspace:*",
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "cookie": "^1.1.1",
+    "pg": "^8.20.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@nestjs/testing": "^11.0.0"
+    "@nestjs/testing": "^11.0.0",
+    "prisma": "^7.7.0"
   }
 }

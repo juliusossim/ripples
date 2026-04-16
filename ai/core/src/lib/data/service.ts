@@ -1,6 +1,6 @@
-import { ChatCompletionMessageParam } from 'openai/resources';
-import { Conversation } from './models.js';
-import { SessionProfile } from '@org/types';
+import type { ChatCompletionMessageParam } from 'openai/resources';
+import type { Conversation } from './models.js';
+import type { SessionProfile } from '@org/types';
 
 export class MemoryStore {
   private readonly conversations: Map<string, Conversation> = new Map();

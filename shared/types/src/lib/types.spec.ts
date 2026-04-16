@@ -1,4 +1,4 @@
-import { Content, Event, FeedItemType, SessionProfile } from './types.js';
+import type { Content, Event, FeedItemType, SessionProfile } from './types.js';
 
 describe('types', () => {
   it('should define SessionProfile interface', () => {

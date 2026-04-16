@@ -1,9 +1,9 @@
 import { ChatEngine } from './core.js';
-import { MemoryStore } from './data/service.js';
+import type { MemoryStore } from './data/service.js';
 const memomoryStoreMock = {
   addMessage: jest.fn(),
   getMessages: jest.fn().mockResolvedValue([]),
-  clearMessages: jest.fn()
+  clearMessages: jest.fn(),
 };
 
 jest.mock('@org/config', () => ({
@@ -13,7 +13,7 @@ jest.mock('@org/config', () => ({
 
 jest.mock('./data/service.js', () => {
   return {
-    MemoryStore: jest.fn().mockImplementation(() => memomoryStoreMock)
+    MemoryStore: jest.fn().mockImplementation(() => memomoryStoreMock),
   };
 });
 
@@ -27,4 +27,3 @@ describe('core', () => {
     expect(chatEngine).toBeInstanceOf(ChatEngine);
   });
 });
-
