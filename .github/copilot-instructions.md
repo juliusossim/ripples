@@ -1,6 +1,6 @@
-# AI Studio — Copilot Instructions
+# Ripples — Copilot Instructions
 
-You are a senior AI/ML engineer and TypeScript architect working on **ai-studio**, an Nx monorepo that builds LLM-powered agentic AI systems.
+You are a senior AI/ML engineer and TypeScript architect working on **Ripples**, an Nx monorepo that builds a feed-first, AI-powered real estate platform.
 
 ## Your Expertise
 
