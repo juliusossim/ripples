@@ -2,14 +2,15 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { RegistrationForm } from '../form/registration/registration-form';
 import type { RegistrationFormValues } from '../form/registration/registration-form.schema';
 import { AuthDivider, GoogleAuthButton } from '../form/shared/auth-form-controls';
-import { readClientError } from '../google/auth-page-utils';
+import { apiUnavailableMessage, readClientError } from '../google/auth-page-utils';
 import { useGoogleAuthFlow } from '../google/use-google-auth-flow';
+import { AuthApiRecovery } from '../layout/auth-api-recovery';
 import { AuthPageLayout } from '../layout/auth-page-layout';
 import { useSession } from '../../session/provider/session-provider';
 import type { RegistrationPageProps } from './registration-page.types';
 
 export function RegistrationPage({ onSignIn }: Readonly<RegistrationPageProps>): ReactElement {
-  const { registerManual, status: sessionStatus } = useSession();
+  const { error: sessionError, registerManual, status: sessionStatus } = useSession();
   const successMessage = useCallback((fullName: string) => `Welcome to Ripples, ${fullName}.`, []);
   const google = useGoogleAuthFlow({
     callbackMessage: 'Completing Google sign up...',
@@ -36,6 +37,8 @@ export function RegistrationPage({ onSignIn }: Readonly<RegistrationPageProps>):
 
   const isDisabled = isManualSubmitting || google.isGoogleConnecting;
   const isRestoringSession = sessionStatus === 'loading';
+  const statusMessage =
+    google.message ?? (sessionError === apiUnavailableMessage ? undefined : sessionError);
 
   return (
     <AuthPageLayout
@@ -48,6 +51,7 @@ export function RegistrationPage({ onSignIn }: Readonly<RegistrationPageProps>):
       heroTitle="Create your agent workspace."
       onFooterAction={onSignIn}
     >
+      <AuthApiRecovery />
       <GoogleAuthButton
         disabled={isDisabled || isRestoringSession}
         isConnecting={google.isGoogleConnecting}
@@ -58,7 +62,7 @@ export function RegistrationPage({ onSignIn }: Readonly<RegistrationPageProps>):
       <RegistrationForm
         disabled={isDisabled || isRestoringSession}
         isSubmitting={isManualSubmitting}
-        message={google.message}
+        message={statusMessage}
         onSubmit={submitManualRegistration}
       />
     </AuthPageLayout>

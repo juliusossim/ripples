@@ -1,10 +1,11 @@
-import type { ReactElement } from 'react';
+import { forwardRef } from 'react';
 import { cn } from '../utils';
 import type { LabelProps } from './label.types';
 
-export function Label({ className, ...props }: LabelProps): ReactElement {
+export const Label = forwardRef<HTMLLabelElement, LabelProps>(({ className, ...props }, ref) => {
   return (
     <label
+      ref={ref}
       className={cn(
         'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
         className,
@@ -12,4 +13,6 @@ export function Label({ className, ...props }: LabelProps): ReactElement {
       {...props}
     />
   );
-}
+});
+
+Label.displayName = 'Label';

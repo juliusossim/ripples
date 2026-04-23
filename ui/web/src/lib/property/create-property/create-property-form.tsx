@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { MediaUploadItem } from '@org/ui-media-upload';
 import { useForm } from 'react-hook-form';
-import type { ReactElement } from 'react';
+import { useCallback, type ReactElement } from 'react';
 import { Button } from '@org/ui-primitives';
 import {
   createPropertyFormSchema,
@@ -21,6 +22,7 @@ export function CreatePropertyForm({
   disabled = false,
   error,
   isSubmitting,
+  onUploadFiles,
   onSubmit,
 }: Readonly<CreatePropertyFormProps>): ReactElement {
   const {
@@ -28,10 +30,23 @@ export function CreatePropertyForm({
     handleSubmit,
     register,
     reset,
+    setValue,
+    watch,
   } = useForm<CreatePropertyFormInput, undefined, CreatePropertyFormValues>({
     defaultValues: createDefaultPropertyFormValues(),
     resolver: zodResolver(createPropertyFormSchema),
   });
+  const media = watch('media');
+
+  const handleMediaChange = useCallback(
+    (items: MediaUploadItem[]): void => {
+      setValue('media', items, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    },
+    [setValue],
+  );
 
   async function submit(values: CreatePropertyFormValues): Promise<void> {
     await onSubmit(toCreatePropertyRequest(values));
@@ -43,7 +58,13 @@ export function CreatePropertyForm({
       <CreatePropertyBasicFields errors={errors} register={register} />
       <CreatePropertyLocationFields errors={errors} register={register} />
       <CreatePropertyPriceFields errors={errors} register={register} />
-      <CreatePropertyMediaFields errors={errors} register={register} />
+      <CreatePropertyMediaFields
+        disabled={disabled || isSubmitting}
+        error={errors.media?.message}
+        media={media}
+        onChange={handleMediaChange}
+        onUploadFiles={onUploadFiles}
+      />
       {error ? (
         <p className="rounded-md border bg-muted px-3 py-2 text-sm text-destructive">{error}</p>
       ) : null}

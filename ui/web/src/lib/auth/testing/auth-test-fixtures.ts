@@ -38,6 +38,14 @@ export function createAuthClientStub(overrides: Partial<RipplesApiClient> = {}):
       state: 'oauth-state',
       expiresAt: new Date('2026-04-15T00:10:00.000Z'),
     }),
+    uploadMedia: async (files) =>
+      files.map((file) => ({
+        mimeType: file.type,
+        originalName: file.name,
+        source: 'device' as const,
+        type: file.type.startsWith('video/') ? 'video' : 'image',
+        url: `https://example.com/uploads/${file.name}`,
+      })),
     viewProperty: async () => ({ property: testProperty, event: testEvent('view_property') }),
     ...overrides,
   };
@@ -99,6 +107,21 @@ export const testFeedResponse: FeedResponse = {
         recency: 99,
         engagement: 0,
         ripple: 0,
+      },
+      social: {
+        author: {
+          id: 'system',
+          name: 'Ripples Feed',
+          role: 'New listing pick',
+          source: 'system',
+          verified: true,
+        },
+        views: 0,
+        rankingLabel: 'top_match',
+        primaryReason: 'fresh_to_feed',
+        reasonBadges: ['just_listed'],
+        recommendationSummary:
+          'Fresh to the feed because it is very fresh, carries early-stage traction, and has a ripple score of 0.',
       },
     },
   ],

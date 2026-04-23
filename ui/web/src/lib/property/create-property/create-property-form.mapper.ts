@@ -9,8 +9,7 @@ export function createDefaultPropertyFormValues(): CreatePropertyFormValues {
     country: '',
     priceAmount: 250000,
     priceCurrency: 'USD',
-    imageUrl: '',
-    imageAlt: '',
+    media: [],
   };
 }
 
@@ -26,13 +25,11 @@ export function toCreatePropertyRequest(values: CreatePropertyFormValues): Creat
       amount: values.priceAmount,
       currency: values.priceCurrency,
     },
-    media: [
-      {
-        url: values.imageUrl,
-        type: 'image',
-        alt: values.imageAlt,
-      },
-    ],
+    media: values.media.map((item) => ({
+      url: item.url,
+      type: item.type,
+      alt: item.alt,
+    })),
     status: 'active',
   };
 }

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { RipplesApiClient } from '@org/api-client';
 
 export interface RipplesApiContextValue {
+  readonly apiBaseUrl: string;
   readonly client: RipplesApiClient;
   readonly queryClient: QueryClient;
 }

@@ -5,6 +5,7 @@ import type {
   GoogleOAuthStartResponse,
   Property,
   PropertyInteractionResponse,
+  UploadedMediaAsset,
 } from '@org/types';
 import type {
   FeedRequestOptions,
@@ -44,6 +45,14 @@ export function createRipplesApiClient(options: RipplesApiClientOptions = {}): R
       }),
     createProperty: (input, accessToken) =>
       request<Property>(fetcher, baseUrl, '/properties', input, authorizationHeader(accessToken)),
+    uploadMedia: (files, accessToken) =>
+      requestFormData<UploadedMediaAsset[]>(
+        fetcher,
+        baseUrl,
+        '/media/uploads',
+        createUploadFormData(files),
+        authorizationHeader(accessToken),
+      ),
     getProperties: (accessToken) =>
       request<Property[]>(
         fetcher,
@@ -121,6 +130,31 @@ async function request<TResponse>(
   return payload as TResponse;
 }
 
+async function requestFormData<TResponse>(
+  fetcher: typeof fetch,
+  baseUrl: string,
+  path: string,
+  body: FormData,
+  headers: Record<string, string> = {},
+): Promise<TResponse> {
+  const response = await fetcher(`${baseUrl}${path}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      accept: 'application/json',
+      ...headers,
+    },
+    body,
+  });
+  const payload = await parseJson(response);
+
+  if (!response.ok) {
+    throw new ApiClientError(readErrorMessage(payload), response.status, payload);
+  }
+
+  return payload as TResponse;
+}
+
 async function parseJson(response: Response): Promise<unknown> {
   const text = await response.text();
   if (!text) {
@@ -161,4 +195,14 @@ function createFeedPath(input?: FeedRequestOptions): string {
   const query = params.toString();
 
   return query ? `/feed?${query}` : '/feed';
+}
+
+function createUploadFormData(files: File[]): FormData {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+
+  return formData;
 }

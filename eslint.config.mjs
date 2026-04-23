@@ -81,6 +81,50 @@ export default [
                 'scope:app',
               ],
             },
+            {
+              sourceTag: 'layer:ui-foundation',
+              onlyDependOnLibsWithTags: ['scope:shared', 'layer:ui-foundation'],
+            },
+            {
+              sourceTag: 'layer:ui-composed',
+              onlyDependOnLibsWithTags: [
+                'scope:shared',
+                'layer:ui-foundation',
+                'layer:ui-composed',
+              ],
+            },
+            {
+              sourceTag: 'layer:ui-web',
+              onlyDependOnLibsWithTags: [
+                'scope:shared',
+                'layer:ui-foundation',
+                'layer:ui-composed',
+                'layer:ui-web',
+              ],
+            },
+            {
+              sourceTag: 'layer:feature',
+              onlyDependOnLibsWithTags: [
+                'scope:shared',
+                'scope:ai',
+                'layer:ui-foundation',
+                'layer:ui-composed',
+                'layer:ui-web',
+                'layer:feature',
+              ],
+            },
+            {
+              sourceTag: 'layer:app',
+              onlyDependOnLibsWithTags: [
+                'scope:shared',
+                'scope:ai',
+                'layer:ui-foundation',
+                'layer:ui-composed',
+                'layer:ui-web',
+                'layer:feature',
+                'layer:app',
+              ],
+            },
           ],
         },
       ],

@@ -8,6 +8,9 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { AuthConfigService } from './app/auth/services/auth-config.service';
+import { loadApiEnv } from './load-env';
+
+loadApiEnv();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);

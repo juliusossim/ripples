@@ -1,5 +1,13 @@
 import type { ReactElement } from 'react';
-import { Badge, Button, Card, CardContent, CardFooter, CardHeader } from '@org/ui-primitives';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  MediaRenderer,
+} from '@org/ui-primitives';
 import type { PropertyInteractionName } from '@org/data';
 import type { PropertyCardProps, PropertyMetricProps } from './property-card.types';
 import { formatDate, readPropertyCardMetadata } from './property-card.utils';
@@ -23,11 +31,11 @@ export function PropertyCard({
     <Card className="overflow-hidden">
       <div className="aspect-[16/10] bg-muted">
         {primaryMedia ? (
-          <img
+          <MediaRenderer
             alt={primaryMedia.alt}
-            className="size-full object-cover"
-            loading="lazy"
-            src={primaryMedia.url}
+            className="size-full"
+            mediaClassName="size-full"
+            source={{ url: primaryMedia.url }}
           />
         ) : (
           <div className="flex size-full items-center justify-center text-sm text-muted-foreground">

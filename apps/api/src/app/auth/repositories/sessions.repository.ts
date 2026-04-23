@@ -16,7 +16,7 @@ export class SessionsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, refreshTokenHash: string, expiresAt: Date): Promise<AuthSession> {
-    const session = await this.prisma.authSession.create({
+    const session = await this.prisma.session.create({
       data: {
         userId,
         refreshTokenHash,
@@ -28,7 +28,7 @@ export class SessionsRepository {
   }
 
   async findActiveByRefreshTokenHash(refreshTokenHash: string): Promise<AuthSession | undefined> {
-    const session = await this.prisma.authSession.findFirst({
+    const session = await this.prisma.session.findFirst({
       where: {
         refreshTokenHash,
         revokedAt: null,
@@ -42,7 +42,7 @@ export class SessionsRepository {
   }
 
   async revoke(id: string): Promise<void> {
-    await this.prisma.authSession.updateMany({
+    await this.prisma.session.updateMany({
       where: {
         id,
         revokedAt: null,

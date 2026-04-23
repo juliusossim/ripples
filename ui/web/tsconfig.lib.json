@@ -41,16 +41,22 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../shared/types/tsconfig.lib.json"
+      "path": "../../shared/utils/tsconfig.lib.json"
     },
     {
       "path": "../primitives/tsconfig.lib.json"
     },
     {
-      "path": "../../shared/api-client/tsconfig.lib.json"
+      "path": "../media-upload/tsconfig.lib.json"
+    },
+    {
+      "path": "../../shared/types/tsconfig.lib.json"
     },
     {
       "path": "../../shared/data/tsconfig.lib.json"
+    },
+    {
+      "path": "../../shared/api-client/tsconfig.lib.json"
     }
   ]
 }

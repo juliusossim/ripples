@@ -10,6 +10,7 @@ module.exports = {
   displayName: 'prompts',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
+  watchman: false,
   transform: {
     '^.+\\.[tj]s$': ['@swc/jest', swcJestConfig],
   },

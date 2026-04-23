@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 import { authUserQueryKey, createRipplesQueryClient, RipplesApiProvider } from '@org/data';
 import { createAuthClientStub, testAuthResponse } from '../../auth/testing/auth-test-fixtures';
+import { apiUnavailableMessage } from '../../auth/google/auth-page-utils';
 import { AuthProvider, useSession } from './session-provider';
 
 describe('AuthProvider', () => {
@@ -76,6 +77,23 @@ describe('AuthProvider', () => {
       fullName: 'Ada Cached',
     });
   });
+
+  it('exposes a friendly error when session refresh fails because the API is offline', async () => {
+    const client = createAuthClientStub({
+      refresh: async () => {
+        throw new TypeError('Failed to fetch');
+      },
+    });
+
+    render(
+      <AuthProvider client={client}>
+        <SessionProbe />
+      </AuthProvider>,
+    );
+
+    expect(await screen.findByText('unauthenticated')).toBeTruthy();
+    expect(screen.getByText(apiUnavailableMessage)).toBeTruthy();
+  });
 });
 
 function SessionProbe(): ReactElement {
@@ -86,6 +104,7 @@ function SessionProbe(): ReactElement {
       <p>{session.status}</p>
       <p>{session.user?.fullName}</p>
       <p>{session.getAuthorizationHeader()}</p>
+      <p>{session.error}</p>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import type {
   RegisterManualRequest,
 } from '@org/types';
 import { authUserQueryKey, useOptionalRipplesApi } from '@org/data';
+import { readClientError } from '../../auth/google/auth-page-utils';
 import type {
   AuthSessionControllerOptions,
   SessionContextValue,
@@ -153,5 +154,5 @@ async function establishSessionFrom(
 }
 
 function readSessionError(error: unknown): string {
-  return error instanceof Error ? error.message : 'Session refresh failed.';
+  return readClientError(error);
 }

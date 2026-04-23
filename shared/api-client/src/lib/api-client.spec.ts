@@ -148,6 +148,32 @@ describe('createRipplesApiClient', () => {
     });
   });
 
+  it('uploads media files as multipart form data', async () => {
+    const fetcher = createFetcher([
+      {
+        mimeType: 'image/jpeg',
+        originalName: 'listing.jpg',
+        source: 'device',
+        type: 'image',
+        url: 'http://localhost:3000/api/media/uploads/listing.jpg',
+      },
+    ]);
+    const client = createRipplesApiClient({ fetcher });
+    const files = [new File(['binary'], 'listing.jpg', { type: 'image/jpeg' })];
+
+    await client.uploadMedia(files, 'access-token');
+
+    expect(fetcher).toHaveBeenCalledWith('http://localhost:3000/api/media/uploads', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        accept: 'application/json',
+        authorization: 'Bearer access-token',
+      },
+      body: expect.any(FormData),
+    });
+  });
+
   it('loads the ranked feed with query parameters', async () => {
     const fetcher = createFetcher({ items: [], nextCursor: '20' });
     const client = createRipplesApiClient({ fetcher });

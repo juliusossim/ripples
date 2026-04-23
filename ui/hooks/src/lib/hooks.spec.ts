@@ -1,7 +1,7 @@
-import { useNoop } from './hooks';
+import { useIsMobile } from './hooks';
 
-describe('useNoop', () => {
-  it('should be defined', () => {
-    expect(useNoop).toBeDefined();
+describe('ui hooks exports', () => {
+  it('should export useIsMobile', () => {
+    expect(useIsMobile).toBeDefined();
   });
 });

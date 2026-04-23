@@ -3,6 +3,7 @@
 module.exports = {
   displayName: '@org/ui-native',
   preset: 'jest-expo',
+  watchman: false,
   moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {

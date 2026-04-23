@@ -1,3 +1,4 @@
+import { formatCurrency } from '@org/utils';
 import type { FeedItemResponse } from '@org/types';
 import type { PropertyCardMetadata } from './property-card.types';
 
@@ -15,9 +16,9 @@ export function readPropertyCardMetadata(item: FeedItemResponse): PropertyCardMe
     title: readString(metadata.title, 'Untitled listing'),
     description: readString(metadata.description, ''),
     locationLabel: `${city}, ${country}`,
-    priceLabel: formatPrice(amount, currency),
+    priceLabel: formatCurrency(amount, currency),
     status: readString(metadata.status, 'active'),
-    views: readNumber(metadata.views, 0),
+    views: item.social.views,
   };
 }
 
@@ -27,14 +28,6 @@ export function formatDate(value: Date | string): string {
     month: 'short',
     year: 'numeric',
   }).format(new Date(value));
-}
-
-function formatPrice(amount: number, currency: string): string {
-  return new Intl.NumberFormat(undefined, {
-    currency,
-    maximumFractionDigits: 0,
-    style: 'currency',
-  }).format(amount);
 }
 
 function readRecord(value: unknown): Record<string, unknown> {

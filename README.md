@@ -23,8 +23,12 @@ pnpm dev
 The `dev` script runs the web and API servers together:
 
 ```sh
-pnpm nx run-many -t serve -p web,api --parallel=2
+pnpm dev
 ```
+
+For web-side environment variables, copy [apps/web/.env.example](apps/web/.env.example) to
+`apps/web/.env`. That file includes the optional Google Drive and Dropbox picker keys used by the
+listing media uploader.
 
 ## Current Architecture
 
@@ -63,8 +67,12 @@ workspace packages.
 
 ## Roadmap Anchor
 
-See [docs/ripples-v2-blueprint.md](docs/ripples-v2-blueprint.md) for the product and system
-blueprint.
+See these docs together for the current product and implementation direction:
+
+- [docs/ripples-v2-blueprint.md](docs/ripples-v2-blueprint.md)
+- [docs/ripples-implementation-tracker.md](docs/ripples-implementation-tracker.md)
+- [docs/ripples-product-outcome-tracker.md](docs/ripples-product-outcome-tracker.md)
+- [docs/ripples-scope-ownership-matrix.md](docs/ripples-scope-ownership-matrix.md)
 
 ## Useful Commands
 

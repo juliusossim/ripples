@@ -1,3 +1,3 @@
 import type { ComponentPropsWithoutRef } from 'react';
 
-export type LabelProps = ComponentPropsWithoutRef<'label'>;
+export type LabelProps = Readonly<ComponentPropsWithoutRef<'label'>>;

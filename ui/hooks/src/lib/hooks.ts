@@ -1,3 +1,1 @@
-export function useNoop(): void {
-  // placeholder hook
-}
+export { useIsMobile } from './use-is-mobile';

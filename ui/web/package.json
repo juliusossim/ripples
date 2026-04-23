@@ -16,7 +16,10 @@
     "@org/api-client": "workspace:*",
     "@org/data": "workspace:*",
     "@org/types": "workspace:*",
+    "@org/ui-media-upload": "workspace:*",
     "@org/ui-primitives": "workspace:*",
+    "@org/utils": "workspace:*",
+    "lucide-react": "^1.8.0",
     "react-hook-form": "^7.72.1",
     "zod": "^4.3.6"
   },

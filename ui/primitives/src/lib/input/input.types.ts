@@ -1,3 +1,3 @@
 import type { ComponentPropsWithoutRef } from 'react';
 
-export type InputProps = ComponentPropsWithoutRef<'input'>;
+export type InputProps = Readonly<ComponentPropsWithoutRef<'input'>>;

@@ -4,6 +4,7 @@ import { feedQueryKey } from '../feed/feed-query';
 import type {
   CreatePropertyMutationResult,
   PropertyInteractionMutationResult,
+  UploadMediaMutationResult,
 } from './property-mutations.types';
 
 export function useCreatePropertyMutation(accessToken?: string): CreatePropertyMutationResult {
@@ -15,6 +16,14 @@ export function useCreatePropertyMutation(accessToken?: string): CreatePropertyM
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: feedQueryKey });
     },
+  });
+}
+
+export function useUploadMediaMutation(accessToken?: string): UploadMediaMutationResult {
+  const { client } = useRipplesApi();
+
+  return useMutation({
+    mutationFn: (files) => client.uploadMedia(files, accessToken),
   });
 }
 

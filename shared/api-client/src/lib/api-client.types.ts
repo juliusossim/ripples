@@ -13,6 +13,7 @@ import type {
   PropertyInteractionResponse,
   RefreshTokenRequest,
   RegisterManualRequest,
+  UploadedMediaAsset,
 } from '@org/types';
 
 export interface RipplesApiClientOptions {
@@ -29,6 +30,7 @@ export interface RipplesApiClient {
   completeGoogleOAuth(input: GoogleOAuthCallbackRequest): Promise<AuthResponse>;
   getMe(accessToken: string): Promise<AuthUser>;
   createProperty(input: CreatePropertyRequest, accessToken?: string): Promise<Property>;
+  uploadMedia(files: File[], accessToken?: string): Promise<UploadedMediaAsset[]>;
   getProperties(accessToken?: string): Promise<Property[]>;
   getFeed(input?: FeedRequestOptions, accessToken?: string): Promise<FeedResponse>;
   viewProperty(

@@ -9,4 +9,5 @@ export interface SystemPrompt {
   rules?: string;
 }
 
+export * from './models/index.js';
 export * from './ripples.js';

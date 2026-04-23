@@ -4,6 +4,7 @@ import type {
   Property,
   PropertyInteractionRequest,
   PropertyInteractionResponse,
+  UploadedMediaAsset,
 } from '@org/types';
 
 export type CreatePropertyMutationResult = UseMutationResult<
@@ -11,6 +12,8 @@ export type CreatePropertyMutationResult = UseMutationResult<
   Error,
   CreatePropertyRequest
 >;
+
+export type UploadMediaMutationResult = UseMutationResult<UploadedMediaAsset[], Error, File[]>;
 
 export type PropertyInteractionName = 'like' | 'save' | 'share' | 'view';
 

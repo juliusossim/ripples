@@ -21,6 +21,8 @@ export default defineConfig(() => ({
       '@org/api-client': resolve(import.meta.dirname, '../../shared/api-client/src/index.ts'),
       '@org/data': resolve(import.meta.dirname, '../../shared/data/src/index.ts'),
       '@org/types': resolve(import.meta.dirname, '../../shared/types/src/index.ts'),
+      '@org/utils': resolve(import.meta.dirname, '../../shared/utils/src/index.ts'),
+      '@org/ui-media-upload': resolve(import.meta.dirname, '../../ui/media-upload/src/index.ts'),
       '@org/ui-primitives': resolve(import.meta.dirname, '../../ui/primitives/src/index.ts'),
       '@org/ui-web': resolve(import.meta.dirname, '../../ui/web/src/index.ts'),
       react: resolve(import.meta.dirname, '../../node_modules/react'),

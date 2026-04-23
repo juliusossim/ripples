@@ -14,9 +14,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import type { PropertyListingStatus } from '@org/types';
+import type { PropertyStatus } from '@org/types';
 
-const listingStatuses: readonly PropertyListingStatus[] = [
+const listingStatuses: readonly PropertyStatus[] = [
   'draft',
   'active',
   'under-offer',
@@ -97,5 +97,5 @@ export class CreatePropertyDto {
 
   @IsOptional()
   @IsIn(listingStatuses)
-  status?: PropertyListingStatus;
+  status?: PropertyStatus;
 }

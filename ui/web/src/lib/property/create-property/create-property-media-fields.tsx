@@ -1,37 +1,26 @@
 import type { ReactElement } from 'react';
-import { Input } from '@org/ui-primitives';
+import { MediaUpload } from '@org/ui-media-upload';
 import { CreatePropertyFormField } from './create-property-form-field';
-import type { CreatePropertyFormFieldsProps } from './create-property-form.types';
+import type { CreatePropertyMediaFieldsProps } from './create-property-form.types';
 
 export function CreatePropertyMediaFields({
-  errors,
-  register,
-}: Readonly<CreatePropertyFormFieldsProps>): ReactElement {
+  disabled,
+  error,
+  media,
+  onChange,
+  onUploadFiles,
+}: Readonly<CreatePropertyMediaFieldsProps>): ReactElement {
   return (
-    <>
-      <CreatePropertyFormField
-        error={errors.imageUrl?.message}
-        id="property-image-url"
-        label="Image URL"
-      >
-        <Input
-          id="property-image-url"
-          placeholder="https://..."
-          type="url"
-          {...register('imageUrl')}
+    <CreatePropertyFormField error={error} id="property-media" label="Listing media">
+      <div id="property-media">
+        <MediaUpload
+          disabled={disabled}
+          error={error}
+          onChange={onChange}
+          onUploadFiles={onUploadFiles}
+          value={media}
         />
-      </CreatePropertyFormField>
-      <CreatePropertyFormField
-        error={errors.imageAlt?.message}
-        id="property-image-alt"
-        label="Image alt text"
-      >
-        <Input
-          id="property-image-alt"
-          placeholder="Exterior view at sunset"
-          {...register('imageAlt')}
-        />
-      </CreatePropertyFormField>
-    </>
+      </div>
+    </CreatePropertyFormField>
   );
 }

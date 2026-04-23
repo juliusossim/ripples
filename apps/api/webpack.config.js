@@ -10,6 +10,11 @@ module.exports = {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
+  resolve: {
+    alias: {
+      '@org/utils': join(__dirname, '../../shared/utils/src/index.ts'),
+    },
+  },
   plugins: [
     new webpack.IgnorePlugin({
       resourceRegExp: /^pg-native$/,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventType as PrismaEventType, Prisma, type PlatformEvent } from '@prisma/client';
+import { EventType as PrismaEventType, Prisma, type BehaviorEvent } from '@prisma/client';
 import type { Event as RipplesEvent, EventType } from '@org/types';
 import { PrismaService } from '../database/prisma.service';
 import type { CreateEventDto } from './dto/create-event.dto';
@@ -9,7 +9,7 @@ export class EventsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(input: CreateEventDto): Promise<RipplesEvent> {
-    const event = await this.prisma.platformEvent.create({
+    const event = await this.prisma.behaviorEvent.create({
       data: {
         userId: input.userId,
         sessionId: input.sessionId,
@@ -24,7 +24,7 @@ export class EventsRepository {
   }
 
   async findMany(): Promise<RipplesEvent[]> {
-    const events = await this.prisma.platformEvent.findMany({
+    const events = await this.prisma.behaviorEvent.findMany({
       orderBy: {
         createdAt: 'desc',
       },
@@ -34,7 +34,7 @@ export class EventsRepository {
   }
 
   async findForEntity(entityId: string): Promise<RipplesEvent[]> {
-    const events = await this.prisma.platformEvent.findMany({
+    const events = await this.prisma.behaviorEvent.findMany({
       where: { entityId },
       orderBy: {
         createdAt: 'desc',
@@ -45,7 +45,7 @@ export class EventsRepository {
   }
 
   async countForEntity(entityId: string, type: EventType): Promise<number> {
-    return this.prisma.platformEvent.count({
+    return this.prisma.behaviorEvent.count({
       where: {
         entityId,
         type: type as PrismaEventType,
@@ -53,11 +53,11 @@ export class EventsRepository {
     });
   }
 
-  private toEvent(event: PlatformEvent): RipplesEvent {
+  private toEvent(event: BehaviorEvent): RipplesEvent {
     return {
       id: event.id,
       userId: event.userId ?? undefined,
-      sessionId: event.sessionId,
+      sessionId: event.sessionId ?? '',
       type: event.type,
       entityId: event.entityId,
       entityType: event.entityType,

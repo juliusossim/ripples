@@ -1,0 +1,17 @@
+{
+  "name": "ui-composed",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "ui/composed/src",
+  "projectType": "library",
+  "tags": ["npm:public", "scope:ui", "layer:ui-composed"],
+  "// targets": "to see all targets run: nx show project ui-composed --web",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "ui/composed",
+        "command": "eslint src/index.ts src/lib/index.ts src/lib/amount/index.ts src/lib/amount/amount.tsx src/lib/amount/amount.types.ts src/lib/badge/index.ts src/lib/badge/brand-badge src/lib/card/index.ts src/lib/card/fashion-card src/lib/card/property-card src/lib/carousel/index.ts src/lib/carousel/brand-carousel src/lib/carousel/media-carousel src/lib/carousel/product-carousel src/lib/carousel/property-carousel src/lib/command src/lib/error-message/index.ts src/lib/error-message/error-message.tsx src/lib/error-message/error-message.types.ts src/lib/form src/lib/grid src/lib/hooks/index.ts src/lib/loading-spinner/index.ts src/lib/loading-spinner/loading-spinner.tsx src/lib/loading-spinner/loading-spinner.types.ts src/lib/media/index.ts src/lib/nav/index.ts src/lib/nav/nav-list-item src/lib/nav/nav-menu src/lib/social-interactions/index.ts src/lib/social-interactions/social-interactions.tsx src/lib/social-interactions/social-interactions.types.ts src/lib/stars/index.ts src/lib/stars/star-rating.tsx src/lib/stars/star-rating.types.ts src/lib/typography/index.ts src/lib/typography/more-info-text.tsx src/lib/typography/typography.tsx src/lib/typography/typography.constants.ts src/lib/typography/typography.types.ts"
+      }
+    }
+  }
+}

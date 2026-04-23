@@ -2,6 +2,9 @@ import type { ReactElement } from 'react';
 import { ApiClientError } from '@org/api-client';
 import type { OAuthCallbackParams } from './google-auth.types';
 
+export const apiUnavailableMessage =
+  'Ripples API is unavailable. Start the API server and try again.';
+
 export function GoogleIcon(): ReactElement {
   return (
     <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24">
@@ -57,8 +60,23 @@ export function readClientError(error: unknown): string {
     return error.message;
   }
   if (error instanceof Error) {
+    if (isNetworkError(error)) {
+      return apiUnavailableMessage;
+    }
+
     return error.message;
   }
 
   return 'Something went wrong. Please try again.';
+}
+
+function isNetworkError(error: Error): boolean {
+  const message = error.message.toLowerCase();
+
+  return (
+    message.includes('failed to fetch') ||
+    message.includes('networkerror') ||
+    message.includes('load failed') ||
+    message.includes('connection refused')
+  );
 }

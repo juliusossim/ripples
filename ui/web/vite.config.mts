@@ -10,6 +10,8 @@ export default defineConfig(() => ({
       '@org/api-client': resolve(__dirname, '../../shared/api-client/src/index.ts'),
       '@org/data': resolve(__dirname, '../../shared/data/src/index.ts'),
       '@org/types': resolve(__dirname, '../../shared/types/src/index.ts'),
+      '@org/utils': resolve(__dirname, '../../shared/utils/src/index.ts'),
+      '@org/ui-media-upload': resolve(__dirname, '../media-upload/src/index.ts'),
       '@org/ui-primitives': resolve(__dirname, '../primitives/src/index.ts'),
       react: resolve(__dirname, '../../node_modules/react'),
       'react-dom': resolve(__dirname, '../../node_modules/react-dom'),

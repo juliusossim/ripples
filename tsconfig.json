@@ -62,6 +62,12 @@
     },
     {
       "path": "./shared/data"
+    },
+    {
+      "path": "./ui/media-upload"
+    },
+    {
+      "path": "./ui/composed"
     }
   ]
 }

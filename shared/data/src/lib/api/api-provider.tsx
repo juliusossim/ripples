@@ -9,6 +9,7 @@ import { createRipplesApiClient } from '@org/api-client';
 import type { RipplesApiContextValue, RipplesApiProviderProps } from './api-provider.types';
 
 export const authUserQueryKey = ['auth', 'me'] as const satisfies QueryKey;
+const defaultApiBaseUrl = 'http://localhost:3000/api';
 
 const RipplesApiContext = createContext<RipplesApiContextValue | undefined>(undefined);
 
@@ -36,17 +37,18 @@ export function RipplesApiProvider({
   client: providedClient,
   queryClient: providedQueryClient,
 }: Readonly<RipplesApiProviderProps>): ReactElement {
+  const resolvedApiBaseUrl = apiBaseUrl ?? defaultApiBaseUrl;
   const client = useMemo(
-    () => providedClient ?? createRipplesApiClient({ baseUrl: apiBaseUrl }),
-    [apiBaseUrl, providedClient],
+    () => providedClient ?? createRipplesApiClient({ baseUrl: resolvedApiBaseUrl }),
+    [providedClient, resolvedApiBaseUrl],
   );
   const queryClient = useMemo(
     () => providedQueryClient ?? createRipplesQueryClient(),
     [providedQueryClient],
   );
   const value = useMemo<RipplesApiContextValue>(
-    () => ({ client, queryClient }),
-    [client, queryClient],
+    () => ({ apiBaseUrl: resolvedApiBaseUrl, client, queryClient }),
+    [client, queryClient, resolvedApiBaseUrl],
   );
 
   return (

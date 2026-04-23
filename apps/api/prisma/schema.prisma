@@ -11,11 +11,6 @@ enum AuthProvider {
   google
 }
 
-enum UserRole {
-  user
-  admin
-}
-
 enum EventType {
   view_property
   like_property
@@ -32,56 +27,236 @@ enum MediaType {
   video
 }
 
-enum PropertyListingStatus {
+enum UserSystemRole {
+  user
+  admin
+}
+
+enum OrganizationType {
+  agency
+  developer
+  owner_company
+  shop
+  supplier
+  brand
+}
+
+enum MembershipStatus {
+  invited
+  active
+  suspended
+  removed
+}
+
+enum OrganizationMembershipRole {
+  owner
+  admin
+  manager
+  agent
+  creator
+  member
+}
+
+enum VerificationStatus {
+  pending
+  in_review
+  verified
+  rejected
+  expired
+}
+
+enum AddressAssignmentSubjectType {
+  property
+  organization
+  user_profile
+  creator_profile
+}
+
+enum AddressAssignmentRole {
+  property_location
+  registered_address
+  operating_address
+  billing_address
+  shipping_origin
+  pickup_address
+  profile_address
+  service_base
+}
+
+enum PropertyStatus {
   draft
   active
+  archived
+}
+
+enum OwnershipSubjectType {
+  user
+  organization
+}
+
+enum PropertyOwnershipRole {
+  owner
+  co_owner
+  manager
+}
+
+enum ListingStatus {
+  draft
+  review
+  active
+  paused
   under_offer @map("under-offer")
   sold
   archived
 }
 
-model AuthUser {
-  id            String        @id @default(uuid()) @db.Uuid
-  email         String        @unique @db.VarChar(254)
-  fullName      String        @db.VarChar(120)
-  avatarUrl     String?       @db.VarChar(2048)
-  roles         UserRole[]    @default([user])
-  emailVerified Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  accounts      AuthAccount[]
-  sessions      AuthSession[]
-
-  @@index([createdAt])
+enum ListingAssignmentActorType {
+  user
+  organization
 }
 
-model AuthAccount {
-  id             String       @id @default(uuid()) @db.Uuid
-  userId         String       @db.Uuid
-  provider       AuthProvider
-  providerUserId String       @db.VarChar(255)
-  passwordHash   String?
-  passwordSalt   String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  user           AuthUser     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerUserId])
-  @@index([userId])
+enum ListingAssignmentRole {
+  owner
+  agent
+  creator
+  agency
+  manager
 }
 
-model AuthSession {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @db.Uuid
-  refreshTokenHash String    @unique
-  expiresAt        DateTime
-  revokedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  user             AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+enum ContentPostType {
+  listing
+  campaign
+  creator_post
+  market_update
+}
 
-  @@index([userId])
-  @@index([expiresAt])
-  @@index([revokedAt])
+enum ReactionType {
+  like
+  love
+  wow
+  fire
+  interested
+}
+
+enum TrendWindow {
+  m5
+  h1
+  h24
+  d7
+}
+
+enum TrendEntityType {
+  listing
+  property
+  content_post
+  creator_profile
+  product
+  live_session
+}
+
+enum CurrencyCode {
+  NGN
+  USD
+  CAD
+  AUD
+  GHS
+  KES
+  ZAR
+  GBP
+  EUR
+  JPY
+  CNY
+  INR
+  RIPPLE
+}
+
+enum WalletOwnerType {
+  user
+  organization
+}
+
+enum WalletStatus {
+  active
+  suspended
+  closed
+}
+
+enum LedgerEntryType {
+  reward_credit
+  spend_debit
+  transfer_in
+  transfer_out
+  payment_in
+  payment_out
+  adjustment
+}
+
+enum TransactionStatus {
+  initiated
+  pending_payment
+  funded
+  completed
+  cancelled
+  disputed
+}
+
+enum TransactionPartyRole {
+  buyer
+  seller
+  agent
+  creator
+  agency
+  platform
+}
+
+enum PaymentStatus {
+  pending
+  succeeded
+  failed
+  cancelled
+  refunded
+}
+
+enum PropertyDocumentVerificationStatus {
+  pending
+  in_review
+  verified
+  rejected
+  expired
+}
+
+enum ListingOccupancyModel {
+  entire_unit
+  room_only
+  shared_unit
+  landlord_on_site
+}
+
+enum ListingSuitabilityTag {
+  student_friendly
+  couple_friendly
+  working_professional_friendly
+  family_friendly
+}
+
+enum PaymentCadence {
+  one_time
+  monthly
+  quarterly
+  biannual
+  yearly
+  milestone
+}
+
+enum PaymentPlanType {
+  upfront_only
+  installments_allowed
+}
+
+enum ListingCompletionState {
+  ready_built
+  off_plan
+  under_construction
 }
 
 model OAuthState {
@@ -94,49 +269,649 @@ model OAuthState {
 
   @@index([expiresAt])
 }
-
-model PropertyListing {
-  id            String                @id @default(uuid()) @db.Uuid
-  title         String                @db.VarChar(160)
-  description   String                @db.VarChar(5000)
-  city          String                @db.VarChar(120)
-  country       String                @db.VarChar(120)
-  latitude      Float?
-  longitude     Float?
-  priceAmount   Float
-  priceCurrency String                @db.VarChar(3)
-  status        PropertyListingStatus @default(active)
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  media         PropertyMedia[]
-
-  @@index([status, createdAt])
-  @@index([city, country])
-}
-
 model PropertyMedia {
-  id         String          @id @default(uuid()) @db.Uuid
-  propertyId String          @db.Uuid
-  url        String          @db.VarChar(2048)
-  type       MediaType
-  alt        String          @db.VarChar(240)
-  sortOrder  Int
-  property   PropertyListing @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid()) @db.Uuid
+  propertyId String  @db.Uuid
+  url       String   @db.VarChar(2048)
+  type      MediaType
+  alt       String   @db.VarChar(240)
+  sortOrder Int
+  property  Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
+  @@unique([propertyId, sortOrder])
   @@index([propertyId, sortOrder])
 }
 
-model PlatformEvent {
-  id         String    @id @default(uuid()) @db.Uuid
-  userId     String?   @db.VarChar(160)
-  sessionId  String    @db.VarChar(160)
-  type       EventType
-  entityId   String    @db.VarChar(160)
-  entityType String    @db.VarChar(80)
-  metadata   Json
-  createdAt  DateTime  @default(now())
+model User {
+  id                 String          @id @default(uuid()) @db.Uuid
+  email              String          @unique @db.VarChar(254)
+  fullName           String          @db.VarChar(120)
+  avatarUrl          String?         @db.VarChar(2048)
+  systemRoles        UserSystemRole[] @default([user])
+  emailVerified      Boolean         @default(false)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  authIdentities     AuthIdentity[]
+  sessions           Session[]
+  profile            UserProfile?
+  creatorProfile     CreatorProfile?
+  roleMappings       UserRoleMap[]
+  organizationMemberships OrganizationMembership[]
+  contentPosts       ContentPost[]
+  reactions          Reaction[]
+  saves              Save[]
+  shares             Share[]
+  follows            Follow[]
+  behaviorEvents     BehaviorEvent[]
+  feedImpressions    FeedImpression[]
+}
+
+model AuthIdentity {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  provider           AuthProvider
+  providerSubject    String        @db.VarChar(255)
+  passwordHash       String?
+  passwordSalt       String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+}
+
+model Session {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  refreshTokenHash   String        @unique
+  expiresAt          DateTime
+  revokedAt          DateTime?
+  createdAt          DateTime      @default(now())
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
+model UserProfile {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @unique @db.Uuid
+  bio                String?       @db.VarChar(1000)
+  headline           String?       @db.VarChar(160)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id                 String        @id @default(uuid()) @db.Uuid
+  code               String        @unique @db.VarChar(80)
+  name               String        @db.VarChar(120)
+  description        String?       @db.VarChar(500)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  userMappings       UserRoleMap[]
+  permissionMappings RolePermissionMap[]
+}
+
+model Permission {
+  id                 String        @id @default(uuid()) @db.Uuid
+  code               String        @unique @db.VarChar(120)
+  name               String        @db.VarChar(120)
+  description        String?       @db.VarChar(500)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  roleMappings       RolePermissionMap[]
+}
+
+model UserRoleMap {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  roleId             String        @db.Uuid
+  scope              String?       @db.VarChar(120)
+  createdAt          DateTime      @default(now())
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role               Role          @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, roleId, scope])
+  @@index([roleId])
+}
+
+model RolePermissionMap {
+  id                 String        @id @default(uuid()) @db.Uuid
+  roleId             String        @db.Uuid
+  permissionId       String        @db.Uuid
+  createdAt          DateTime      @default(now())
+  role               Role          @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  permission         Permission    @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model Organization {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  name               String                 @db.VarChar(160)
+  slug               String                 @unique @db.VarChar(120)
+  type               OrganizationType
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  profile            OrganizationProfile?
+  memberships        OrganizationMembership[]
+  serviceZones       ServiceZone[]
+  contentPosts       ContentPost[]
+}
+
+model OrganizationProfile {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  organizationId     String                 @unique @db.Uuid
+  description        String?                @db.VarChar(2000)
+  logoUrl            String?                @db.VarChar(2048)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  organization       Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model OrganizationMembership {
+  id                 String                     @id @default(uuid()) @db.Uuid
+  organizationId     String                     @db.Uuid
+  userId             String                     @db.Uuid
+  role               OrganizationMembershipRole
+  status             MembershipStatus           @default(active)
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  organization       Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user               User                       @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, userId])
+  @@index([userId, status])
+}
+
+model Address {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  line1              String?                  @db.VarChar(160)
+  line2              String?                  @db.VarChar(160)
+  city               String                   @db.VarChar(120)
+  region             String?                  @db.VarChar(120)
+  postalCode         String?                  @db.VarChar(40)
+  country            String                   @db.VarChar(120)
+  latitude           Float?
+  longitude          Float?
+  formatted          String?                  @db.VarChar(500)
+  landmark           String?                  @db.VarChar(160)
+  placeProviderSource String?                 @db.VarChar(80)
+  placeProviderId    String?                  @db.VarChar(160)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  assignments        AddressAssignment[]
+  verifications      AddressVerification[]
+
+  @@index([city, country])
+}
+
+model AddressAssignment {
+  id                 String                       @id @default(uuid()) @db.Uuid
+  addressId          String                       @db.Uuid
+  subjectType        AddressAssignmentSubjectType
+  subjectId          String                       @db.Uuid
+  role               AddressAssignmentRole
+  isPrimary          Boolean                      @default(false)
+  createdAt          DateTime                     @default(now())
+  address            Address                      @relation(fields: [addressId], references: [id], onDelete: Restrict)
+
+  @@unique([addressId, subjectType, subjectId, role])
+  @@index([subjectType, subjectId, role])
+}
+
+model AddressVerification {
+  id                 String               @id @default(uuid()) @db.Uuid
+  addressId          String               @db.Uuid
+  status             VerificationStatus   @default(pending)
+  provider           String?              @db.VarChar(120)
+  notes              String?              @db.VarChar(1000)
+  isCurrent          Boolean              @default(true)
+  verifiedAt         DateTime?
+  createdAt          DateTime             @default(now())
+  address            Address              @relation(fields: [addressId], references: [id], onDelete: Restrict)
+
+  @@index([addressId, status])
+  @@index([addressId, isCurrent])
+}
+
+model ServiceZone {
+  id                 String         @id @default(uuid()) @db.Uuid
+  organizationId     String         @db.Uuid
+  name               String         @db.VarChar(120)
+  description        String?        @db.VarChar(500)
+  geoJson            Json?
+  active             Boolean        @default(true)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, active])
+}
+
+model Property {
+  id                 String              @id @default(uuid()) @db.Uuid
+  title              String              @db.VarChar(160)
+  description        String              @db.VarChar(5000)
+  status             PropertyStatus      @default(active)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  media              PropertyMedia[]
+  ownerships         PropertyOwnership[]
+  documents          PropertyDocument[]
+  listings           Listing[]
+
+  @@index([status, createdAt])
+}
+
+model PropertyOwnership {
+  id                 String                @id @default(uuid()) @db.Uuid
+  propertyId         String                @db.Uuid
+  ownerType          OwnershipSubjectType
+  ownerId            String                @db.Uuid
+  role               PropertyOwnershipRole @default(owner)
+  active             Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  property           Property              @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+
+  @@unique([propertyId, ownerType, ownerId, role, active])
+  @@index([ownerType, ownerId])
+}
+
+model PropertyDocument {
+  id                 String                       @id @default(uuid()) @db.Uuid
+  propertyId         String                       @db.Uuid
+  kind               String                       @db.VarChar(80)
+  name               String                       @db.VarChar(160)
+  url                String                       @db.VarChar(2048)
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+  property           Property                     @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  verifications      PropertyDocumentVerification[]
+
+  @@index([propertyId, kind])
+}
+
+model PropertyDocumentVerification {
+  id                 String                             @id @default(uuid()) @db.Uuid
+  propertyDocumentId String                             @db.Uuid
+  status             PropertyDocumentVerificationStatus @default(pending)
+  verifier           String?                            @db.VarChar(120)
+  notes              String?                            @db.VarChar(1000)
+  isCurrent          Boolean                            @default(true)
+  verifiedAt         DateTime?
+  createdAt          DateTime                           @default(now())
+  propertyDocument   PropertyDocument                   @relation(fields: [propertyDocumentId], references: [id], onDelete: Restrict)
+
+  @@index([propertyDocumentId, status])
+  @@index([propertyDocumentId, isCurrent])
+}
+
+model Listing {
+  id                 String                    @id @default(uuid()) @db.Uuid
+  propertyId         String                    @db.Uuid
+  title              String                    @db.VarChar(160)
+  description        String                    @db.VarChar(5000)
+  priceAmount        Decimal                   @db.Decimal(18, 2)
+  priceCurrency      CurrencyCode
+  status             ListingStatus             @default(active)
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  property           Property                  @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  assignments        ListingAssignment[]
+  versions           ListingVersion[]
+  promotions         ListingPromotion[]
+  availability       ListingAvailability?
+  shareProgram       ListingShareProgram?
+  suitability        ListingSuitabilityProfile?
+  eligibility        ListingEligibilityPolicy?
+  occupancy          ListingOccupancyProfile?
+  paymentTerms       ListingPaymentTerms?
+
+  @@index([propertyId, status, createdAt])
+}
+
+model ListingVersion {
+  id                 String        @id @default(uuid()) @db.Uuid
+  listingId          String        @db.Uuid
+  title              String        @db.VarChar(160)
+  description        String        @db.VarChar(5000)
+  priceAmount        Decimal       @db.Decimal(18, 2)
+  priceCurrency      CurrencyCode
+  createdAt          DateTime      @default(now())
+  listing            Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, createdAt])
+}
+
+model ListingAssignment {
+  id                 String                     @id @default(uuid()) @db.Uuid
+  listingId          String                     @db.Uuid
+  actorType          ListingAssignmentActorType
+  actorId            String                     @db.Uuid
+  role               ListingAssignmentRole
+  active             Boolean                    @default(true)
+  createdAt          DateTime                   @default(now())
+  listing            Listing                    @relation(fields: [listingId], references: [id], onDelete: Restrict)
+
+  @@unique([listingId, actorType, actorId, role, active])
+  @@index([actorType, actorId])
+}
+
+model ListingPromotion {
+  id                 String        @id @default(uuid()) @db.Uuid
+  listingId          String        @db.Uuid
+  slot               String        @db.VarChar(80)
+  startsAt           DateTime
+  endsAt             DateTime
+  createdAt          DateTime      @default(now())
+  listing            Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, startsAt, endsAt])
+}
+
+model ListingAvailability {
+  id                 String        @id @default(uuid()) @db.Uuid
+  listingId          String        @unique @db.Uuid
+  availableFrom      DateTime?
+  availableTo        DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  listing            Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingShareProgram {
+  id                 String        @id @default(uuid()) @db.Uuid
+  listingId          String        @unique @db.Uuid
+  commissionRate     Decimal       @db.Decimal(8, 4)
+  active             Boolean       @default(true)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  listing            Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingSuitabilityProfile {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  listingId          String                 @unique @db.Uuid
+  tags               ListingSuitabilityTag[]
+  notes              String?                @db.VarChar(500)
+  active             Boolean                @default(true)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  listing            Listing                @relation(fields: [listingId], references: [id], onDelete: Restrict)
+}
+
+model ListingEligibilityPolicy {
+  id                 String               @id @default(uuid()) @db.Uuid
+  listingId          String               @unique @db.Uuid
+  policyText         String               @db.VarChar(2000)
+  reviewStatus       VerificationStatus   @default(pending)
+  active             Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  listing            Listing              @relation(fields: [listingId], references: [id], onDelete: Restrict)
+}
+
+model ListingOccupancyProfile {
+  id                 String                @id @default(uuid()) @db.Uuid
+  listingId          String                @unique @db.Uuid
+  occupancyModel     ListingOccupancyModel
+  landlordLivesOnSite Boolean              @default(false)
+  active             Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  listing            Listing               @relation(fields: [listingId], references: [id], onDelete: Restrict)
+}
+
+model ListingPaymentTerms {
+  id                 String                @id @default(uuid()) @db.Uuid
+  listingId          String                @unique @db.Uuid
+  completionState    ListingCompletionState
+  planType           PaymentPlanType
+  cadence            PaymentCadence
+  minimumUpfrontCycles Int                 @default(1)
+  installmentCount   Int?
+  depositAmount      Decimal?              @db.Decimal(18, 2)
+  depositCurrency    CurrencyCode?
+  notes              String?               @db.VarChar(1000)
+  active             Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  listing            Listing               @relation(fields: [listingId], references: [id], onDelete: Restrict)
+}
+
+model CreatorProfile {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @unique @db.Uuid
+  bio                String?       @db.VarChar(1000)
+  active             Boolean       @default(true)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  user               User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+model ContentPost {
+  id                 String          @id @default(uuid()) @db.Uuid
+  authorUserId       String?         @db.Uuid
+  authorOrgId        String?         @db.Uuid
+  type               ContentPostType
+  title              String?         @db.VarChar(160)
+  body               String?         @db.VarChar(5000)
+  targetType         TrendEntityType?
+  targetId           String?         @db.Uuid
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  media              ContentMedia[]
+  authorUser         User?           @relation(fields: [authorUserId], references: [id], onDelete: SetNull)
+  authorOrg          Organization?   @relation(fields: [authorOrgId], references: [id], onDelete: SetNull)
+
+  @@index([authorUserId, createdAt])
+  @@index([authorOrgId, createdAt])
+}
+
+model ContentMedia {
+  id                 String      @id @default(uuid()) @db.Uuid
+  contentPostId      String      @db.Uuid
+  url                String      @db.VarChar(2048)
+  type               MediaType
+  alt                String      @db.VarChar(240)
+  sortOrder          Int
+  contentPost        ContentPost @relation(fields: [contentPostId], references: [id], onDelete: Cascade)
+
+  @@unique([contentPostId, sortOrder])
+}
+
+model Reaction {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  targetType         TrendEntityType
+  targetId           String        @db.Uuid
+  kind               ReactionType
+  createdAt          DateTime      @default(now())
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, targetId, kind])
+}
+
+model Save {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  targetType         TrendEntityType
+  targetId           String        @db.Uuid
+  createdAt          DateTime      @default(now())
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, targetId])
+}
+
+model Share {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  targetType         TrendEntityType
+  targetId           String        @db.Uuid
+  createdAt          DateTime      @default(now())
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([targetType, targetId, createdAt])
+}
+
+model Follow {
+  id                 String        @id @default(uuid()) @db.Uuid
+  followerUserId     String        @db.Uuid
+  targetType         TrendEntityType
+  targetId           String        @db.Uuid
+  createdAt          DateTime      @default(now())
+  follower           User          @relation(fields: [followerUserId], references: [id], onDelete: Cascade)
+
+  @@unique([followerUserId, targetType, targetId])
+}
+
+model BehaviorEvent {
+  id                 String          @id @default(uuid()) @db.Uuid
+  userId             String?         @db.Uuid
+  sessionId          String?         @db.VarChar(160)
+  type               EventType
+  entityId           String          @db.VarChar(160)
+  entityType         String          @db.VarChar(80)
+  metadata           Json
+  createdAt          DateTime        @default(now())
+  user               User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([entityId, type])
   @@index([sessionId, createdAt])
   @@index([createdAt])
+}
+
+model FeedImpression {
+  id                 String          @id @default(uuid()) @db.Uuid
+  userId             String?         @db.Uuid
+  sessionId          String?         @db.VarChar(160)
+  surface            String          @db.VarChar(80)
+  targetType         TrendEntityType
+  targetId           String          @db.Uuid
+  createdAt          DateTime        @default(now())
+  user               User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([surface, createdAt])
+  @@index([targetType, targetId, createdAt])
+}
+
+model TrendSignal {
+  id                 String          @id @default(uuid()) @db.Uuid
+  entityType         TrendEntityType
+  entityId           String          @db.Uuid
+  window             TrendWindow
+  timeBucket         DateTime
+  score              Decimal         @db.Decimal(18, 6)
+  metrics            Json
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@unique([entityType, entityId, window, timeBucket])
+}
+
+model Wallet {
+  id                 String          @id @default(uuid()) @db.Uuid
+  ownerType          WalletOwnerType
+  ownerId            String          @db.Uuid
+  status             WalletStatus    @default(active)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  accounts           WalletAccount[]
+
+  @@unique([ownerType, ownerId])
+}
+
+model WalletAccount {
+  id                 String          @id @default(uuid()) @db.Uuid
+  walletId           String          @db.Uuid
+  currencyCode       CurrencyCode
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  wallet             Wallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  ledgerEntries      LedgerEntry[]
+
+  @@unique([walletId, currencyCode])
+}
+
+model LedgerEntry {
+  id                 String          @id @default(uuid()) @db.Uuid
+  walletAccountId    String          @db.Uuid
+  entryType          LedgerEntryType
+  amount             Decimal         @db.Decimal(18, 2)
+  currencyCode       CurrencyCode
+  referenceType      String?         @db.VarChar(80)
+  referenceId        String?         @db.Uuid
+  metadata           Json?
+  createdAt          DateTime        @default(now())
+  walletAccount      WalletAccount   @relation(fields: [walletAccountId], references: [id], onDelete: Restrict)
+  rippleReward       RippleReward?
+  rippleSpend        RippleSpend?
+
+  @@index([walletAccountId, createdAt])
+  @@index([referenceType, referenceId])
+}
+
+model RippleReward {
+  id                 String          @id @default(uuid()) @db.Uuid
+  ledgerEntryId      String          @unique @db.Uuid
+  sourceType         String          @db.VarChar(80)
+  sourceId           String?         @db.Uuid
+  createdAt          DateTime        @default(now())
+  ledgerEntry        LedgerEntry     @relation(fields: [ledgerEntryId], references: [id], onDelete: Restrict)
+}
+
+model RippleSpend {
+  id                 String          @id @default(uuid()) @db.Uuid
+  ledgerEntryId      String          @unique @db.Uuid
+  spendType          String          @db.VarChar(80)
+  targetId           String?         @db.Uuid
+  createdAt          DateTime        @default(now())
+  ledgerEntry        LedgerEntry     @relation(fields: [ledgerEntryId], references: [id], onDelete: Restrict)
+}
+
+model Transaction {
+  id                 String            @id @default(uuid()) @db.Uuid
+  status             TransactionStatus @default(initiated)
+  amount             Decimal           @db.Decimal(18, 2)
+  currencyCode       CurrencyCode
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  parties            TransactionParty[]
+  payments           Payment[]
+}
+
+model TransactionParty {
+  id                 String               @id @default(uuid()) @db.Uuid
+  transactionId      String               @db.Uuid
+  partyType          WalletOwnerType
+  partyId            String               @db.Uuid
+  role               TransactionPartyRole
+  createdAt          DateTime             @default(now())
+  transaction        Transaction          @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId, role])
+  @@index([partyType, partyId])
+}
+
+model Payment {
+  id                 String          @id @default(uuid()) @db.Uuid
+  transactionId      String          @db.Uuid
+  amount             Decimal         @db.Decimal(18, 2)
+  currencyCode       CurrencyCode
+  status             PaymentStatus   @default(pending)
+  provider           String?         @db.VarChar(80)
+  providerReference  String?         @db.VarChar(160)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  transaction        Transaction     @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+
+  @@index([transactionId, status])
+  @@index([providerReference])
 }

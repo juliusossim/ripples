@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { AuthProvider, Prisma, UserRole } from '@prisma/client';
+import { AuthProvider, Prisma, UserSystemRole } from '@prisma/client';
 import type {
   AuthProvider as PublicAuthProvider,
   AuthUser,
@@ -8,9 +8,9 @@ import type {
 import type { CreateManualUserInput, StoredUser, UpsertGoogleUserInput } from '../auth.types';
 import { PrismaService } from '../../database/prisma.service';
 
-type StoredUserRecord = Prisma.AuthUserGetPayload<{
+type StoredUserRecord = Prisma.UserGetPayload<{
   include: {
-    accounts: true;
+    authIdentities: true;
   };
 }>;
 
@@ -22,23 +22,23 @@ export class UsersRepository {
     const email = this.normalizeEmail(input.email);
 
     try {
-      const user = await this.prisma.authUser.create({
+      const user = await this.prisma.user.create({
         data: {
           email,
           fullName: input.fullName.trim(),
-          roles: [UserRole.user],
+          systemRoles: [UserSystemRole.user],
           emailVerified: false,
-          accounts: {
+          authIdentities: {
             create: {
               provider: AuthProvider.manual,
-              providerUserId: email,
+              providerSubject: email,
               passwordHash: input.passwordHash,
               passwordSalt: input.passwordSalt,
             },
           },
         },
         include: {
-          accounts: true,
+          authIdentities: true,
         },
       });
 
@@ -64,22 +64,22 @@ export class UsersRepository {
       return this.updateGoogleUser(existingByEmail.id, input);
     }
 
-    const user = await this.prisma.authUser.create({
+    const user = await this.prisma.user.create({
       data: {
         email,
         fullName: input.fullName.trim(),
         avatarUrl: input.avatarUrl,
-        roles: [UserRole.user],
+        systemRoles: [UserSystemRole.user],
         emailVerified: input.emailVerified,
-        accounts: {
+        authIdentities: {
           create: {
             provider: AuthProvider.google,
-            providerUserId: input.googleSubject,
+            providerSubject: input.googleSubject,
           },
         },
       },
       include: {
-        accounts: true,
+        authIdentities: true,
       },
     });
 
@@ -87,10 +87,10 @@ export class UsersRepository {
   }
 
   async findById(id: string): Promise<StoredUser | undefined> {
-    const user = await this.prisma.authUser.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        accounts: true,
+        authIdentities: true,
       },
     });
 
@@ -98,12 +98,12 @@ export class UsersRepository {
   }
 
   async findByEmail(email: string): Promise<StoredUser | undefined> {
-    const user = await this.prisma.authUser.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         email: this.normalizeEmail(email),
       },
       include: {
-        accounts: true,
+        authIdentities: true,
       },
     });
 
@@ -128,32 +128,32 @@ export class UsersRepository {
     userId: string,
     input: UpsertGoogleUserInput,
   ): Promise<StoredUser> {
-    const user = await this.prisma.authUser.update({
+    const user = await this.prisma.user.update({
       where: { id: userId },
       data: {
         fullName: input.fullName.trim(),
         avatarUrl: input.avatarUrl,
         emailVerified: input.emailVerified,
-        accounts: {
+        authIdentities: {
           upsert: {
             where: {
-              provider_providerUserId: {
+              provider_providerSubject: {
                 provider: AuthProvider.google,
-                providerUserId: input.googleSubject,
+                providerSubject: input.googleSubject,
               },
             },
             create: {
               provider: AuthProvider.google,
-              providerUserId: input.googleSubject,
+              providerSubject: input.googleSubject,
             },
             update: {
-              providerUserId: input.googleSubject,
+              providerSubject: input.googleSubject,
             },
           },
         },
       },
       include: {
-        accounts: true,
+        authIdentities: true,
       },
     });
 
@@ -162,42 +162,46 @@ export class UsersRepository {
 
   private async findByAccount(
     provider: AuthProvider,
-    providerUserId: string,
+    providerSubject: string,
   ): Promise<StoredUser | undefined> {
-    const account = await this.prisma.authAccount.findUnique({
+    const authIdentity = await this.prisma.authIdentity.findUnique({
       where: {
-        provider_providerUserId: {
+        provider_providerSubject: {
           provider,
-          providerUserId,
+          providerSubject,
         },
       },
       include: {
         user: {
           include: {
-            accounts: true,
+            authIdentities: true,
           },
         },
       },
     });
 
-    return account ? this.toStoredUser(account.user) : undefined;
+    return authIdentity ? this.toStoredUser(authIdentity.user) : undefined;
   }
 
   private toStoredUser(user: StoredUserRecord): StoredUser {
-    const manualAccount = user.accounts.find((account) => account.provider === AuthProvider.manual);
-    const googleAccount = user.accounts.find((account) => account.provider === AuthProvider.google);
+    const manualIdentity = user.authIdentities.find(
+      (identity) => identity.provider === AuthProvider.manual,
+    );
+    const googleIdentity = user.authIdentities.find(
+      (identity) => identity.provider === AuthProvider.google,
+    );
 
     return {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: user.avatarUrl ?? undefined,
-      roles: user.roles.map((role) => this.toPublicRole(role)),
-      providers: user.accounts.map((account) => this.toPublicProvider(account.provider)),
+      roles: user.systemRoles.map((role) => this.toPublicRole(role)),
+      providers: user.authIdentities.map((identity) => this.toPublicProvider(identity.provider)),
       emailVerified: user.emailVerified,
-      passwordHash: manualAccount?.passwordHash ?? undefined,
-      passwordSalt: manualAccount?.passwordSalt ?? undefined,
-      googleSubject: googleAccount?.providerUserId,
+      passwordHash: manualIdentity?.passwordHash ?? undefined,
+      passwordSalt: manualIdentity?.passwordSalt ?? undefined,
+      googleSubject: googleIdentity?.providerSubject,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
@@ -207,8 +211,8 @@ export class UsersRepository {
     return provider === AuthProvider.google ? 'google' : 'manual';
   }
 
-  private toPublicRole(role: UserRole): PublicUserRole {
-    return role === UserRole.admin ? 'admin' : 'user';
+  private toPublicRole(role: UserSystemRole): PublicUserRole {
+    return role === UserSystemRole.admin ? 'admin' : 'user';
   }
 
   private isUniqueConstraintError(error: unknown): boolean {

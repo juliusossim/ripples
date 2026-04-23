@@ -2,14 +2,15 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { SignInForm } from '../form/sign-in/sign-in-form';
 import type { SignInFormValues } from '../form/sign-in/sign-in-form.schema';
 import { AuthDivider, GoogleAuthButton } from '../form/shared/auth-form-controls';
-import { readClientError } from '../google/auth-page-utils';
+import { apiUnavailableMessage, readClientError } from '../google/auth-page-utils';
 import { useGoogleAuthFlow } from '../google/use-google-auth-flow';
+import { AuthApiRecovery } from '../layout/auth-api-recovery';
 import { AuthPageLayout } from '../layout/auth-page-layout';
 import { useSession } from '../../session/provider/session-provider';
 import type { SignInPageProps } from './sign-in-page.types';
 
 export function SignInPage({ onCreateAccount }: Readonly<SignInPageProps>): ReactElement {
-  const { loginManual, status: sessionStatus } = useSession();
+  const { error: sessionError, loginManual, status: sessionStatus } = useSession();
   const successMessage = useCallback((fullName: string) => `Welcome back, ${fullName}.`, []);
   const google = useGoogleAuthFlow({
     callbackMessage: 'Completing Google sign in...',
@@ -32,6 +33,8 @@ export function SignInPage({ onCreateAccount }: Readonly<SignInPageProps>): Reac
 
   const isDisabled = isManualSubmitting || google.isGoogleConnecting;
   const isRestoringSession = sessionStatus === 'loading';
+  const statusMessage =
+    google.message ?? (sessionError === apiUnavailableMessage ? undefined : sessionError);
 
   return (
     <AuthPageLayout
@@ -44,6 +47,7 @@ export function SignInPage({ onCreateAccount }: Readonly<SignInPageProps>): Reac
       heroTitle="Return to your real estate feed."
       onFooterAction={onCreateAccount}
     >
+      <AuthApiRecovery />
       <GoogleAuthButton
         disabled={isDisabled || isRestoringSession}
         isConnecting={google.isGoogleConnecting}
@@ -54,7 +58,7 @@ export function SignInPage({ onCreateAccount }: Readonly<SignInPageProps>): Reac
       <SignInForm
         disabled={isDisabled || isRestoringSession}
         isSubmitting={isManualSubmitting}
-        message={google.message}
+        message={statusMessage}
         onSubmit={submitManualLogin}
       />
     </AuthPageLayout>
