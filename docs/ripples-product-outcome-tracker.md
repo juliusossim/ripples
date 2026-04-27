@@ -47,20 +47,54 @@ outcomes, it is necessary infrastructure rather than complete product scope.
 The current app already provides:
 
 - auth and session handling
-- property creation with media upload
+- direct object-storage-backed media upload for listing creation
+- authenticated property creation with `mediaAssetId` attachments and ownership
+  writes
 - a feed UI with ranked property cards
 - like, save, share, and view interactions on property items
+- route boundaries for public discovery, feed, listing detail, creator profile,
+  inbox, dashboard, live, notifications, and catalog workflows
+- hardened raw event ingestion and owner-scoped media/property write paths
 
 The current app is still missing important product outcome slices:
 
-- anonymous discovery-first entry
+- real visitor-safe discovery feed content at `/`
 - real multi-content feed inventory
 - creator identity and follow loops
 - comments and community interactions
 - real live rooms and live participation
 - inquiry, viewing booking, and conversion flows
 - trust, moderation, notifications, and operator tooling
-- a defined role for `dashboard`, `chat`, `agents`, and `mobile`
+- completed media processing, moderation, derivative delivery, and non-listing
+  media adoption
+- a defined role for `features/dashboard`, `features/chat`, `features/agents`,
+  and `apps/mobile`
+
+## 3.1 Foundation Status Snapshot
+
+This tracker should be read against the current repo baseline and route plan,
+not against an earlier pre-routing or pre-media-cutover version of the app.
+
+Status snapshot:
+
+- `Done`
+  auth and session handling
+- `Done`
+  route boundaries aligned with the
+  [Web Routing Plan](/Users/juliusossim/Documents/ripples/docs/ripples-web-routing-plan.md)
+- `Done`
+  listing creation through authenticated `mediaAssetId`-backed media flow
+- `Partially done`
+  property feed interactions, because like/save/share/view exist but the
+  interaction loop is not yet fully trustworthy or complete
+- `Partially done`
+  media platform foundations, because listing media is now production-shaped but
+  derivatives, moderation, and multi-surface reuse are still incomplete
+- `Not started`
+  public discovery-first feed experience
+- `Not started`
+  creator, social, live, inquiry, notification, and trust loops as real product
+  experiences
 
 ---
 
@@ -113,7 +147,7 @@ User outcome:
 
 Repo areas:
 
-- `apps/web/src/app`
+- `apps/web/src/routes`
 - `ui/web/src/lib/feed`
 - `ui/web/src/lib/session`
 - `shared/data/src/lib/feed`
@@ -121,7 +155,8 @@ Repo areas:
 
 Build:
 
-- public or semi-public feed route
+- replace the current placeholder at `/` with a real visitor-safe discovery
+  feed
 - visitor feed shell and sign-up prompts
 - visitor-safe feed query path
 - graceful transition from visitor session to authenticated session
@@ -230,7 +265,7 @@ Usability effect:
 
 Status:
 
-- `Not started`
+- `Partially done`
 
 Goal:
 
@@ -257,6 +292,8 @@ Build:
 Dependencies:
 
 - expanded event taxonomy
+- feed impression tracking from the
+  [AI Feed Foundations Tracker](/Users/juliusossim/Documents/ripples/docs/ripples-implementation-tracker.md)
 
 Outputs:
 
@@ -354,6 +391,58 @@ Usability effect:
 
 - turns Ripples from a browsing surface into an actionable marketplace
 
+## 5.7 Media Platform Completion And Reuse
+
+Status:
+
+- `In progress`
+
+Goal:
+
+- finish the remaining media work required to support creator, catalog,
+  organization, and trust surfaces beyond listing creation
+
+User outcome:
+
+- users can upload, publish, and view trustworthy media consistently across
+  listings, profiles, content, and future catalog flows
+
+Repo areas:
+
+- `apps/api/src/app/media`
+- `apps/api/src/app/property`
+- `apps/api/src/app/content`
+- `shared/types/src/lib/models`
+- `shared/api-client/src/lib`
+- `shared/data/src/lib`
+- `ui/media-upload`
+- `ui/web`
+- `apps/web/src/routes/dashboard-*`
+
+Build:
+
+- derivative generation and media processing queue
+- delivery/read contract for public and restricted assets
+- profile, organization, content, and catalog attachment flows
+- moderation and cleanup lifecycle jobs
+
+Dependencies:
+
+- current listing media foundation
+- agreed route boundaries for dashboard, creator, and catalog surfaces
+- trust and verification direction
+
+Outputs:
+
+- reusable cross-surface media platform
+- safer delivery and moderation foundation
+- less duplicated media logic across publishing surfaces
+
+Usability effect:
+
+- prevents Ripples from feeling reliable only for listing creation while every
+  other media-heavy surface remains incomplete or inconsistent
+
 ---
 
 ## 6. Next
@@ -430,6 +519,7 @@ Dependencies:
 
 - live foundations
 - creator foundations
+- event-cover and richer media platform adoption
 
 Outputs:
 
@@ -471,6 +561,7 @@ Build:
 Dependencies:
 
 - comments, follows, live, and conversion events
+- trustworthy event and identity capture
 
 Outputs:
 
@@ -511,6 +602,7 @@ Build:
 Dependencies:
 
 - verification foundation
+- media moderation and delivery lifecycle
 
 Outputs:
 

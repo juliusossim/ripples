@@ -9,7 +9,7 @@
 > by defining the media architecture required for listings, catalog items,
 > creator content, and future live-commerce surfaces.
 > Concrete rollout steps live in the
-> [Media Platform Execution Plan](/Users/juliusossim/Documents/ripples/docs/ripples-media-implementation-plan.md).
+> [Media Platform Remaining Work Plan](/Users/juliusossim/Documents/ripples/docs/ripples-media-implementation-plan.md).
 
 ---
 
@@ -18,9 +18,12 @@
 Ripples is a media-first product. Listings, catalog items, creator posts, and
 live surfaces all depend on reliable upload and delivery.
 
-The current API stores uploaded files on the local server filesystem and returns
-API-hosted URLs from [media.service.ts](/Users/juliusossim/Documents/ripples/apps/api/src/app/media/media.service.ts).
-That is acceptable for local development, but it is not the production target.
+The current API no longer stores uploaded files on the local server filesystem.
+It now creates `MediaAsset` metadata, issues direct upload targets, and
+finalizes uploads through the media domain in
+[media.service.ts](/Users/juliusossim/Documents/ripples/apps/api/src/app/media/media.service.ts).
+That is an important production foundation, but it is not yet the full end-state
+for Ripples media.
 
 This spec defines the production target:
 
@@ -31,6 +34,45 @@ This spec defines the production target:
 - CDN-backed delivery
 
 Ripples will adopt this as a hard cutover, not a bridge-phase product flow.
+
+## 1.1 Current Implementation Status
+
+Implemented now:
+
+- authenticated direct upload initiation through `POST /media/uploads/initiate`
+- owner-scoped upload completion and abort
+- `MediaAsset` metadata persisted in Prisma
+- property creation using `mediaAssetId` attachments instead of raw media URLs
+- ownership checks on property media attachment
+- byte-signature verification before upload finalization
+
+Partially implemented:
+
+- media platform usage is reliable for listing creation, but not yet fully
+  rolled out across profile, organization, post, catalog, and event surfaces
+- upload completion verifies content, but the lifecycle is still synchronous and
+  does not yet hand off to a real background processing pipeline
+- the current read contract still depends on simple asset summaries rather than
+  a fully resolved derivative-aware media presentation model
+
+Not implemented yet:
+
+- async processing jobs
+- derivative generation and derivative-backed reads
+- signed/private read policy for restricted assets
+- moderation workflow beyond verified upload completion
+- full video pipeline
+
+## 1.2 Remaining Work Snapshot
+
+The highest-value remaining work is:
+
+1. introduce a real processing queue and derivative generation
+2. separate verified upload from public-ready delivery more cleanly
+3. expand the attachment model across creator, organization, content, and
+   catalog surfaces
+4. add cleanup, quota, moderation, and operator lifecycle tooling
+5. add video support only after the image pipeline is complete
 
 ---
 
@@ -63,14 +105,20 @@ change without rewriting the media domain.
 
 ## 2.3 First Production Scope
 
-The first production slice should support:
+The first production slice already supports or is already anchored for:
 
-- image upload for listings and catalog items
+- image upload for listings
 - short-lived single-part signed uploads
 - DB metadata records
 - upload finalization
+- owner-scoped property attachment
+
+The remaining first production program should still deliver:
+
 - async inspection and thumbnail generation
-- eventual moderation hook
+- derivative-aware read models
+- adoption for catalog items and other non-listing media surfaces
+- explicit moderation workflow beyond upload verification
 
 Video support should be a second phase once the processing pipeline exists.
 
@@ -231,11 +279,10 @@ Benefits:
 
 ## 7. Upload Contract
 
-Ripples should replace the current API file-throughput pattern in
-[media.controller.ts](/Users/juliusossim/Documents/ripples/apps/api/src/app/media/media.controller.ts)
-with an intent-based upload flow.
-
-This replacement should be the canonical implementation path, not a sidecar flow.
+Ripples now uses an intent-based upload flow in
+[media.controller.ts](/Users/juliusossim/Documents/ripples/apps/api/src/app/media/media.controller.ts).
+That flow is the canonical implementation path and should remain the only
+production upload path.
 
 ## 7.1 Initiate Upload
 
@@ -533,8 +580,9 @@ Own:
 
 The current listing form mapper in
 [create-property-form.mapper.ts](/Users/juliusossim/Documents/ripples/ui/web/src/lib/property/create-property/create-property-form.mapper.ts)
-still assumes media is a direct URL string on submit. That must change once the
-media asset contract exists.
+already submits `mediaAssetId` references instead of raw URLs. The remaining web
+work is to carry that same pattern into future creator, catalog, profile, and
+organization publishing surfaces.
 
 ---
 
@@ -561,42 +609,53 @@ workflow.
 
 ## 14. Rollout Plan
 
-## Phase 1 — Metadata And Adapter Boundary
+## Phase 1 — Foundation Delivered
 
-- add `MediaAsset` and derivative models
-- introduce storage adapter interface
-- keep current API-mediated upload temporarily if necessary
-- persist metadata separately from local file paths
+Delivered:
 
-Output:
-
-- storage-ready domain model
-
-## Phase 2 — Signed Upload Flow
-
-- add initiate/complete/abort endpoints
-- move client to direct upload
-- stop returning API-hosted local file URLs as canonical asset URLs
+- `MediaAsset` and attachment-backed property persistence
+- storage adapter integration
+- initiate/complete/abort endpoints
+- direct client upload orchestration
+- authenticated and owner-scoped media and property write paths
 
 Output:
 
-- production-safe upload path
+- production-safe listing media foundation
 
-## Phase 3 — Processing Pipeline
+## Phase 2 — Processing And Derivatives
+
+Remaining:
 
 - add async worker jobs
-- verify content after upload
-- generate thumbnails
-- add moderation state
+- generate thumbnails and feed/card derivatives
+- persist derivative records
+- move upload completion into a verified-upload-to-processing transition where
+  appropriate
 
 Output:
 
-- ready-state media lifecycle
+- derivative-aware media lifecycle
 
-## Phase 4 — Catalog And Multi-Surface Adoption
+## Phase 3 — Delivery And Read Contracts
 
-- adopt the same platform for listings and catalog items
-- wire future creator/post surfaces to the same media asset model
+Remaining:
+
+- add explicit delivery/read policy for public and restricted assets
+- resolve read models from finalized assets and derivatives
+- add cleanup and lifecycle jobs for abandoned and deleted media
+
+Output:
+
+- stable client-facing delivery contract
+
+## Phase 4 — Multi-Surface Adoption
+
+Remaining:
+
+- adopt the same platform for catalog, creator profile, organization, post, and
+  event/live media
+- remove legacy URL-based fields from those domains as they are replaced
 
 Output:
 
@@ -604,9 +663,11 @@ Output:
 
 ## Phase 5 — Video And Advanced Delivery
 
+Remaining later:
+
 - add video ingest and poster generation
 - add transcoding and derivative delivery variants
-- move to signed delivery where needed
+- move to signed delivery where product policy requires it
 
 Output:
 
@@ -618,16 +679,18 @@ Output:
 
 Current state:
 
-- API receives file bytes directly
-- API writes files to local disk
-- API returns local-server-backed URLs
+- API creates media metadata first
+- client uploads directly to object storage
+- API verifies upload content on completion
+- property creation attaches ready `mediaAssetId` records
+- listing media persistence no longer depends on raw user-supplied URLs
 
 Migration path:
 
-1. introduce metadata records, storage adapter, and `mediaAssetId`-based contracts
-2. switch web create-property flow directly to upload-initiate/direct-upload/complete
-3. switch property creation to finalized `mediaAssetId` references only
-4. remove direct API file persistence and local file serving
+1. add background processing and derivative creation
+2. expand attachment-backed media beyond listings
+3. introduce stronger delivery/read policy and cleanup jobs
+4. add video only after the image pipeline is complete
 
 ---
 
@@ -648,13 +711,15 @@ Packages and areas likely to change first:
 
 ## 17. Open Decisions
 
-These should be confirmed before implementation:
+These should be confirmed before the remaining phases are implemented:
 
-1. Provider choice for first production deploy: `S3` or `R2`
-2. Whether first rollout supports images only, or images plus limited video
-3. Whether delivery URLs are public CDN URLs or signed-read URLs by default
-4. Which queue/worker mechanism Ripples will use for processing jobs
-5. Whether moderation is blocking in the first rollout or only advisory
+1. Which queue/worker mechanism Ripples will use for processing jobs
+2. Whether delivery URLs are public CDN URLs or signed-read URLs by default
+3. Which derivative set is required for listings before catalog/profile rollout
+4. Whether moderation is blocking in the first async processing rollout or only
+   advisory
+5. How organization-scoped ownership will be represented when media moves beyond
+   purely user-owned listing assets
 
 ---
 
